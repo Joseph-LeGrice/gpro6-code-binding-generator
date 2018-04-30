@@ -1,0 +1,22 @@
+{
+  "name": "code-generator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "run": "node dist/main.js",
+    "build": "npx tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "argparse": "^1.0.10",
+    "fs-extra": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/argparse": "^1.0.33",
+    "@types/fs-extra": "^5.0.2",
+    "pkg": "^4.3.1",
+    "typescript": "^2.8.3"
+  }
+}

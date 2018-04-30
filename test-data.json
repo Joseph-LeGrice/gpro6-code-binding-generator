@@ -1,0 +1,26 @@
+{
+    "nativeIncludePath": "NativeClassFolder/NativeClass.h",
+    "nativeClassName": "NativeClass",
+    "managedClassName": "ManagedClass",
+    "methods": [
+        {
+            "methodType": "instance",
+            "methodName": "DoAThing",
+            "returnTypeInfo": "void",
+            "argInfo": [
+                "string",
+                "int"
+            ]
+        },
+        {
+            "methodType": "static",
+            "methodName": "StaticlyDoAThing",
+            "returnTypeInfo": "double",
+            "argInfo": [
+                "string",
+                "int"
+            ]
+        }
+    ]
+
+}
