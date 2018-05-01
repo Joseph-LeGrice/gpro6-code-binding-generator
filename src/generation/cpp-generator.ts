@@ -39,11 +39,11 @@ export class CppGenerator
     }
     
     private cppInstanceMethodDefinition(methodConfig: MethodConfig): string {
-        return `\tstatic ${methodConfig.returnType(GeneratedType.cpp)} ${methodConfig.name}(int managedInstanceId, ${methodConfig.getArgs(GeneratedType.cpp)})`
+        return `\tstatic ${methodConfig.returnType(GeneratedType.cpp)} ${methodConfig.name}(int managedInstanceId, ${methodConfig.getArgs(GeneratedType.cpp)});`
     }
     
     private cppStaticMethodDefinition(methodConfig: MethodConfig): string {
-        return `\tstatic ${methodConfig.returnType(GeneratedType.cpp)} ${methodConfig.name}(${methodConfig.getArgs(GeneratedType.cpp)})`
+        return `\tstatic ${methodConfig.returnType(GeneratedType.cpp)} ${methodConfig.name}(${methodConfig.getArgs(GeneratedType.cpp)});`
     }
     
     private cppRegisterCalls(): string {        
