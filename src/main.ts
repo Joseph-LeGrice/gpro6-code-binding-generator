@@ -6,10 +6,10 @@ import { CsGenerator } from './generation/cs-generator';
 import { CppGenerator } from './generation/cpp-generator';
 import { GenerationConfig } from './config/generation-config';
 
-var parser = new ArgumentParser();
-parser.addArgument(['--input_directory']);
-parser.addArgument(['--output_cpp_directory']);
-parser.addArgument(['--output_cs_directory']);
+var parser = new ArgumentParser({addHelp: true});
+parser.addArgument(['--input-directory'], { required: true });
+parser.addArgument(['--output-cpp-directory'], { required: true });
+parser.addArgument(['--output-cs-directory'], { required: true });
 
 
 var args = parser.parseArgs();
