@@ -11,7 +11,9 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}\\dist\\main.js",
             "args": [
-                "${workspaceFolder}\\test-data.json"
+                "--input_directory", "${workspaceFolder}\\data\\json-config",
+                "--output_cpp_directory", "${workspaceFolder}\\data\\cpp",
+                "--output_cs_directory", "${workspaceFolder}\\data\\cs"
             ],
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
