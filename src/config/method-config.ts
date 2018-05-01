@@ -29,6 +29,6 @@ export class MethodConfig
         for (const arg of this.argInfo) {
             result.push(arg.value(type));
         }
-        return result.join(',');
+        return result.join(', ');
     }
 }

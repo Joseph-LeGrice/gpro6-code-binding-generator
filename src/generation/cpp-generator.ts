@@ -20,9 +20,9 @@ export class CppGenerator
         const result: Array<string> = new Array<string>();
         result.push(`#include "stdafx.h"`);
         result.push(`#include "Engine/Core/GlobalStaticReferences.h"`);
-        result.push(`#include "${this.config.includePath}"`);
+        result.push(`#include "${this.config.includePath}"\n`);
+        result.push(`${this.cppRegisterCalls()}\n`);
         result.push(`${this.cppGenerateMethods()}`);
-        result.push(`${this.cppRegisterCalls()}`);
         return result.join('\n');
     }
 
@@ -78,7 +78,7 @@ export class CppGenerator
                 methods.push(this.cppStaticMethod(m));
             }
         }
-        return methods.join('\n');
+        return methods.join('\n\n');
     }
 
     private cppInstanceMethod(methodConfig: MethodConfig): string {
