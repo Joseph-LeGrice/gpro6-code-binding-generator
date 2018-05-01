@@ -8,6 +8,8 @@ export class CsGenerator
 
     public csFileTemplate(): string {
         const result: Array<string> = new Array<string>();
+        result.push(`using System.Runtime.CompilerServices;\n`)
+
         result.push(`class ${this.config.className(GeneratedType.cs)}`);
         result.push(`{`);
         result.push(`\t//// GENERATED`)
@@ -26,10 +28,10 @@ export class CsGenerator
     private csInstanceMethod(method: MethodConfig): string {
         const result: Array<string> = new Array<string>();
         result.push(`\t[MethodImpl(MethodImplOptions.InternalCall)]`);
-        result.push(`\tprivate extern static ${method.returnType(GeneratedType.cs)} ${method.name}(int instanceid, ${method.getArgs(GeneratedType.cs)});`);
-        result.push(`\tpublic ${method.returnType(GeneratedType.cs)} ${method.name}(${method.getArgs(GeneratedType.cs)})`);
+        result.push(`\tprivate extern static ${method.returnType(GeneratedType.cs)} ${method.name}(int instanceid, ${method.getArgDefinitions(GeneratedType.cs)});`);
+        result.push(`\tpublic ${method.returnType(GeneratedType.cs)} ${method.name}(${method.getArgDefinitions(GeneratedType.cs)})`);
         result.push(`\t{`);
-        result.push(`\t\t${method.name}(InstanceID, ${method.getArgs(GeneratedType.cs)});`);
+        result.push(`\t\t${method.name}(InstanceID, ${method.getArgUses(GeneratedType.cs)});`);
         result.push(`\t}`);
         return result.join('\n');
     }
@@ -37,7 +39,7 @@ export class CsGenerator
     private csStaticMethod(method: MethodConfig): string {
         const result: Array<string> = new Array<string>()
         result.push(`\t[MethodImplAttribute(MethodImplOptions.InternalCall)]`);
-        result.push(`\tpublic extern static ${method.returnType(GeneratedType.cs)} ${method.name}(${method.getArgs(GeneratedType.cs)});`);
+        result.push(`\tpublic extern static ${method.returnType(GeneratedType.cs)} ${method.name}(${method.getArgDefinitions(GeneratedType.cs)});`);
         return result.join('\n');
     }
 }

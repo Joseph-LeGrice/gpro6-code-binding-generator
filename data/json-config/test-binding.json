@@ -18,7 +18,7 @@
             "returnTypeInfo": "double",
             "argInfo": [
                 "string",
-                "int"
+                "char"
             ]
         }
     ]

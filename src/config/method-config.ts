@@ -24,10 +24,21 @@ export class MethodConfig
 
     public get name(): string { return this.methodName; }
     public get type(): string { return this.methodType; }
-    public getArgs(type: GeneratedType): string {
+    
+    public getArgUses(type: GeneratedType): string {
         let result: string[] = [];
-        for (const arg of this.argInfo) {
-            result.push(arg.value(type));
+        for (let i=0; i < this.argInfo.length; i++) {
+            const arg = this.argInfo[i];
+            result.push(`arg${i}`);
+        }
+        return result.join(', ');
+    }
+    
+    public getArgDefinitions(type: GeneratedType): string {
+        let result: string[] = [];
+        for (let i=0; i < this.argInfo.length; i++) {
+            const arg = this.argInfo[i];
+            result.push(`${arg.value(type)} arg${i}`);
         }
         return result.join(', ');
     }
