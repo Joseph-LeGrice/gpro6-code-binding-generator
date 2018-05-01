@@ -6,11 +6,10 @@ import { CsGenerator } from './generation/cs-generator';
 import { CppGenerator } from './generation/cpp-generator';
 import { GenerationConfig } from './config/generation-config';
 
-var parser = new ArgumentParser({addHelp: true});
-parser.addArgument(['--input-directory'], { required: true });
-parser.addArgument(['--output-cpp-directory'], { required: true });
-parser.addArgument(['--output-cs-directory'], { required: true });
-
+var parser = new ArgumentParser({ addHelp: true });
+parser.addArgument(['--input-directory'], { required: true, help: "The directory containing the JSON code generation provisioning files" });
+parser.addArgument(['--output-cpp-directory'], { required: true, help: "Output directory for generated C++" });
+parser.addArgument(['--output-cs-directory'], { required: true, help: "Output directory for generated C#" });
 
 var args = parser.parseArgs();
 
@@ -26,7 +25,6 @@ async function main() : Promise<void> {
     } else if (stat.isDirectory()) {
         await parseDirectory(args.input_directory);
     }
-    console.log("FINISHED");
 }
 
 async function parseDirectory(inputPath: string) : Promise<void> {
