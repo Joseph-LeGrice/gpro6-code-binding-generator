@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-class ManagedClass
+class ManagedClass : ITypedObject
 {
 	//// GENERATED
 	[MethodImpl(MethodImplOptions.InternalCall)]

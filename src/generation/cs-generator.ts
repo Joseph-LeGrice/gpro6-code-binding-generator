@@ -10,7 +10,7 @@ export class CsGenerator
         const result: Array<string> = new Array<string>();
         result.push(`using System.Runtime.CompilerServices;\n`)
 
-        result.push(`class ${this.config.className(GeneratedType.cs)}`);
+        result.push(`class ${this.config.className(GeneratedType.cs)} : ITypedObject`);
         result.push(`{`);
         result.push(`\t//// GENERATED`)
         for (const m of this.config.allMethods) {
