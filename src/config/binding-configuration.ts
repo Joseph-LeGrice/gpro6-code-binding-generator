@@ -5,12 +5,10 @@ export class BindingCongfiguration
     public namespace: string;
     public fileBindings: Array<FileBinding>;
 
-    public inputDirectory: string;
     public outputCppDirectory: string;
     public outputCsDirectory: string;
 
     constructor(json: any) {
-        this.inputDirectory = json.inputDirectory;
         this.outputCppDirectory = json.outputCppDirectory;
         this.outputCsDirectory = json.outputCsDirectory;
         this.namespace = json.namespace;

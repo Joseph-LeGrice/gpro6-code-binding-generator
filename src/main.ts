@@ -5,64 +5,41 @@ import { FileBinding } from './config/file-binding';
 import { GeneratedType } from './config/argument-binding';
 import { CsBindingGenerator } from './generation/cs/cs-binding-generator';
 import { CppBindingGenerator } from './generation/cpp/cpp-binding-generator';
+import { BindingCongfiguration } from './config/binding-configuration';
 
 var parser = new ArgumentParser({ addHelp: true });
-parser.addArgument(['--input-directory'], { required: true, help: "The directory containing the JSON code generation provisioning files" });
-parser.addArgument(['--output-cpp-directory'], { required: true, help: "Output directory for generated C++" });
-parser.addArgument(['--output-cs-directory'], { required: true, help: "Output directory for generated C#" });
+parser.addArgument(['CONFIG_FILE'], { required: true, help: "Configuration File for Binding Generation" });
 
 var args = parser.parseArgs();
 
 main();
 
 async function main() : Promise<void> {
-    fs.removeSync(args.output_cpp_directory);
-    fs.removeSync(args.output_cs_directory);
+    var json = fs.readJsonSync(args.CONFIG_FILE);
+    const config: BindingCongfiguration = new BindingCongfiguration(json);
 
-    const stat = fs.statSync(args.input_directory);
-    if (stat.isFile()) {
-        await parseFile(args.input_directory);
-    } else if (stat.isDirectory()) {
-        await parseDirectory(args.input_directory);
+    fs.removeSync(config.outputCppDirectory);
+    fs.removeSync(config.outputCsDirectory);
+
+    fs.ensureDirSync(config.outputCppDirectory);
+    fs.ensureDirSync(config.outputCsDirectory);
+
+    const allPromises: Array<Promise<void>> = new Array<Promise<void>>();
+    for (const file of config.fileBindings) {
+        const cppGen = new CppBindingGenerator(file);
+        const cppHeader = cppGen.generateHeaderFile();
+        const cppSource = cppGen.generateSourceFile();
+        
+        const csGen = new CsBindingGenerator(file);
+        const csSource = csGen.csFileTemplate();
+        
+        const cppHeaderFilePath = path.join(config.outputCppDirectory, `${file.className(GeneratedType.cpp)}API.h`);
+        const cppSourceFilePath = path.join(config.outputCppDirectory, `${file.className(GeneratedType.cpp)}API.cpp`);
+        const csSourceFilePath = path.join(config.outputCsDirectory, `${file.className(GeneratedType.cs)}.cs`);
+
+        allPromises.push(fs.writeFile(cppHeaderFilePath, cppHeader));
+        allPromises.push(fs.writeFile(cppSourceFilePath, cppSource));
+        allPromises.push(fs.writeFile(csSourceFilePath, csSource));
     }
-}
-
-async function parseDirectory(inputPath: string) : Promise<void> {
-    const tasks: Array<Promise<void>> = new Array<Promise<void>>();
-    for (const p of fs.readdirSync(args.input_directory)) {
-        const fullPath = path.join(inputPath, p);
-        const stat = fs.statSync(fullPath);
-        if (stat.isFile) {
-            tasks.push(parseFile(fullPath));
-        } else if (stat.isDirectory) {
-            tasks.push(parseDirectory(fullPath));
-        }
-    }
-    await Promise.all(tasks);
-}
-
-async function parseFile(inputPath: string) : Promise<void> {
-    var json = fs.readJsonSync(inputPath);
-    const config = new FileBinding(json);
-    
-    const cppGen = new CppBindingGenerator(config);
-    const cppHeader = cppGen.generateHeaderFile();
-    const cppSource = cppGen.generateSourceFile();
-    
-    const csGen = new CsBindingGenerator(config);
-    const csSource = csGen.csFileTemplate();
-    
-    const cppHeaderFilePath = path.join(args.output_cpp_directory, `${config.className(GeneratedType.cpp)}API.h`);
-    const cppSourceFilePath = path.join(args.output_cpp_directory, `${config.className(GeneratedType.cpp)}API.cpp`);
-    const csSourceFilePath = path.join(args.output_cs_directory, `${config.className(GeneratedType.cs)}.cs`);
-
-    fs.ensureDirSync(args.output_cpp_directory);
-    fs.ensureDirSync(args.output_cpp_directory);
-    fs.ensureDirSync(args.output_cs_directory);
-
-    await Promise.all([
-        fs.writeFile(cppHeaderFilePath, cppHeader),
-        fs.writeFile(cppSourceFilePath, cppSource),
-        fs.writeFile(csSourceFilePath, csSource)
-    ]);
+    await Promise.all(allPromises);    
 }
