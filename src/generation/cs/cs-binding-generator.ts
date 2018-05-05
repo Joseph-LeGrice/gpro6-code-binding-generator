@@ -1,10 +1,10 @@
-import { GenerationConfig } from "../config/generation-config";
-import { MethodConfig } from "../config/method-config";
-import { GeneratedType } from "../config/argument-info";
+import { FileBinding } from "../../config/file-binding";
+import { MethodBinding } from "../../config/method-binding";
+import { GeneratedType } from "../../config/argument-binding";
 
 export class CsBindingGenerator 
 {
-    constructor(public config: GenerationConfig) { }
+    constructor(public config: FileBinding) { }
 
     public csFileTemplate(): string {
         const result: Array<string> = new Array<string>();
@@ -25,7 +25,7 @@ export class CsBindingGenerator
         return result.join('\n');
     }
     
-    private csInstanceMethod(method: MethodConfig): string {
+    private csInstanceMethod(method: MethodBinding): string {
         const result: Array<string> = new Array<string>();
         result.push(`\t[MethodImpl(MethodImplOptions.InternalCall)]`);
         result.push(`\tprivate extern static ${method.returnType(GeneratedType.cs)} ${method.name}(int instanceid, ${method.getArgDefinitions(GeneratedType.cs)});`);
@@ -36,7 +36,7 @@ export class CsBindingGenerator
         return result.join('\n');
     }
     
-    private csStaticMethod(method: MethodConfig): string {
+    private csStaticMethod(method: MethodBinding): string {
         const result: Array<string> = new Array<string>()
         result.push(`\t[MethodImplAttribute(MethodImplOptions.InternalCall)]`);
         result.push(`\tpublic extern static ${method.returnType(GeneratedType.cs)} ${method.name}(${method.getArgDefinitions(GeneratedType.cs)});`);

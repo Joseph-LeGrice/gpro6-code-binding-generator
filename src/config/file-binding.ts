@@ -1,5 +1,5 @@
 import { MethodBinding } from "./method-binding";
-import { GeneratedType } from "./argument-info";
+import { GeneratedType } from "./argument-binding";
 
 export class FileBinding
 {
