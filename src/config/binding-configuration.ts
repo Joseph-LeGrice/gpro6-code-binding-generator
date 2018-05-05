@@ -3,7 +3,7 @@ import { FileBinding } from "./file-binding";
 export class BindingCongfiguration
 {
     public namespace: string;
-    public configs: Array<FileBinding>;
+    public fileBindings: Array<FileBinding>;
 
     public inputDirectory: string;
     public outputCppDirectory: string;
@@ -14,9 +14,9 @@ export class BindingCongfiguration
         this.outputCppDirectory = json.outputCppDirectory;
         this.outputCsDirectory = json.outputCsDirectory;
         this.namespace = json.namespace;
-        this.configs = new Array<FileBinding>();
+        this.fileBindings = new Array<FileBinding>();
         for (const genJson of json.configs) {
-            this.configs.push(new FileBinding(genJson));
+            this.fileBindings.push(new FileBinding(genJson));
         }
     }
 }
