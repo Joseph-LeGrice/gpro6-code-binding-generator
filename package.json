@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "run": "node dist/main.js",
-    "build": "npx tsc",
+    "build": "npm run compile && npm run package",
+    "compile": "npx tsc",
     "package": "npx pkg dist/main.js --out-path out/ --debug"
   },
   "author": "",

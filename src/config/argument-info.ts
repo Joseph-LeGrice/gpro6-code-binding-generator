@@ -26,7 +26,7 @@ const ValidArguments = {
         cs: 'char'
     },
     'string': {
-        cpp: 'const char*',
+        cpp: 'const wchar_t*',
         cs: 'string'
     }
 }

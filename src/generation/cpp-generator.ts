@@ -28,6 +28,7 @@ export class CppGenerator
         result.push(`#include "stdafx.h"`);
         result.push(`#include "${this.config.className(GeneratedType.cpp)}API.h"`);
         result.push(`#include "Engine/Core/GlobalStaticReferences.h"`);
+        result.push(`#include "Engine/Core/RTTI/TypedObjectManager.h"`);
         result.push(`#include "${this.config.includePath}"\n`);
 
         result.push(`${this.cppRegisterCalls()}\n`);
@@ -94,9 +95,8 @@ export class CppGenerator
         const result: Array<string> = new Array<string>();
         result.push(`${methodConfig.returnType(GeneratedType.cpp)} ${this.config.className(GeneratedType.cpp)}API::${methodConfig.name}(int managedInstanceId, ${methodConfig.getArgDefinitions(GeneratedType.cpp)})`)
         result.push(`{`);
-        result.push(`\tScriptedManager* sm = GlobalStaticReferences::Instance()->GetScriptedManager();`);
-        result.push(`\tClassID nativeClassId = ${this.config.className(GeneratedType.cpp)}::GetTypeID();`);
-        result.push(`\t${this.config.className(GeneratedType.cpp)}* nativeClassInstance = static_cast<${this.config.className(GeneratedType.cpp)}*>(sm->GetNativeInstance(nativeClassId, managedInstanceId));`);
+        result.push(`\tTypedObjectManager* tom = GlobalStaticReferences::Instance()->GetTypedObjectManager();`);
+        result.push(`\t${this.config.className(GeneratedType.cpp)}* nativeClassInstance = tom->GetInstance<${this.config.className(GeneratedType.cpp)}>(managedInstanceId);`);
         result.push(`\tnativeClassInstance->${methodConfig.name}(${methodConfig.getArgUses(GeneratedType.cpp)});`);
         result.push(`}`);
         return result.join('\n');
