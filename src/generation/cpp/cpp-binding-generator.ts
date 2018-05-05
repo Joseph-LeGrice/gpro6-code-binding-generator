@@ -1,12 +1,12 @@
-import { GenerationConfig } from "../config/generation-config";
-import { GeneratedType } from "../config/argument-info";
-import { MethodConfig } from "../config/method-config";
+import { FileBinding } from "../../config/file-binding";
+import { GeneratedType } from "../../config/argument-binding";
+import { MethodBinding } from "../../config/method-binding";
 
-export class CppGenerator
+export class CppBindingGenerator implements ICppGenerator
 {
-    constructor(private config: GenerationConfig) { }
+    constructor(private config: FileBinding) { }
 
-    public cppHeaderFileTemplate(): string {
+    public generateHeaderFile(): string {
         const result: Array<string> = new Array<string>();
         result.push(`#pragma once\n`);
         
@@ -18,12 +18,32 @@ export class CppGenerator
         result.push(`class ${this.config.className(GeneratedType.cpp)}API`);
         result.push(`{`);
         result.push(`\tstatic void RegisterCalls();`);
-        result.push(`${this.cppGenerateMethodDefinitions()}`);
+        result.push(`${this.generateMethodDefinitions()}`);
         result.push(`};`);
         return result.join('\n');
     }
 
-    public cppSourceFileTemplate(): string {
+    private generateMethodDefinitions(): string {
+        const result: Array<string> = new Array<string>();
+        for (const m of this.config.allMethods) {
+            if (m.type === 'instance') {
+                result.push(this.instanceMethodDefinition(m));
+            } else if (m.type === 'static') {
+                result.push(this.staticMethodDefinition(m));
+            }
+        }        
+        return result.join('\n');
+    }
+    
+    private instanceMethodDefinition(methodConfig: MethodBinding): string {
+        return `\tstatic ${methodConfig.returnType(GeneratedType.cpp)} ${methodConfig.name}(int managedInstanceId, ${methodConfig.getArgDefinitions(GeneratedType.cpp)});`
+    }
+    
+    private staticMethodDefinition(methodConfig: MethodBinding): string {
+        return `\tstatic ${methodConfig.returnType(GeneratedType.cpp)} ${methodConfig.name}(${methodConfig.getArgDefinitions(GeneratedType.cpp)});`
+    }
+    
+    public generateSourceFile(): string {
         const result: Array<string> = new Array<string>();
         result.push(`#include "stdafx.h"`);
         result.push(`#include "${this.config.className(GeneratedType.cpp)}API.h"`);
@@ -31,82 +51,51 @@ export class CppGenerator
         result.push(`#include "Engine/Core/RTTI/TypedObjectManager.h"`);
         result.push(`#include "${this.config.includePath}"\n`);
 
-        result.push(`${this.cppRegisterCalls()}\n`);
-        result.push(`${this.cppGenerateMethods()}`);
-        return result.join('\n');
-    }
-
-    private cppGenerateMethodDefinitions(): string {
-        const result: Array<string> = new Array<string>();
-        for (const m of this.config.allMethods) {
-            if (m.type === 'instance') {
-                result.push(this.cppInstanceMethodDefinition(m));
-            } else if (m.type === 'static') {
-                result.push(this.cppStaticMethodDefinition(m));
-            }
-        }        
+        result.push(`${this.registerCalls()}\n`);
+        result.push(`${this.generateMethodImplementations()}`);
         return result.join('\n');
     }
     
-    private cppInstanceMethodDefinition(methodConfig: MethodConfig): string {
-        return `\tstatic ${methodConfig.returnType(GeneratedType.cpp)} ${methodConfig.name}(int managedInstanceId, ${methodConfig.getArgDefinitions(GeneratedType.cpp)});`
-    }
-    
-    private cppStaticMethodDefinition(methodConfig: MethodConfig): string {
-        return `\tstatic ${methodConfig.returnType(GeneratedType.cpp)} ${methodConfig.name}(${methodConfig.getArgDefinitions(GeneratedType.cpp)});`
-    }
-    
-    private cppRegisterCalls(): string {        
+    private registerCalls(): string {        
         const result: Array<string> = new Array<string>();
         result.push(`void ${this.config.className(GeneratedType.cpp)}API::RegisterCalls()`);
         result.push(`{`);
         for (const m of this.config.allMethods) {
             if (m.type === 'instance') {
-                result.push(this.cppAddInstanceMonoCall(m));
+                result.push(this.addInstanceMonoCall(m));
             } else if (m.type === 'static') {
-                result.push(this.cppAddStaticMonoCall(m));
+                result.push(this.addStaticMonoCall(m));
             }
         }
         result.push(`}`);
         return result.join('\n');
     }
 
-    private cppAddInstanceMonoCall(methodConfig: MethodConfig): string {
+    private addInstanceMonoCall(methodConfig: MethodBinding): string {
         return `\tmono_add_internal_call("${this.config.className(GeneratedType.cs)}::${methodConfig.name}(int managedInstanceId, ${methodConfig.getArgDefinitions(GeneratedType.cs)})", ${this.config.className(GeneratedType.cpp)}API::${methodConfig.name});`
     }
     
-    private cppAddStaticMonoCall(methodConfig: MethodConfig): string {
+    private addStaticMonoCall(methodConfig: MethodBinding): string {
         return `\tmono_add_internal_call("${this.config.className(GeneratedType.cs)}::${methodConfig.name}", ${this.config.className(GeneratedType.cpp)}API::${methodConfig.name});`
     }
 
-    private cppGenerateMethods(): string {
+    private generateMethodImplementations(): string {
         const methods: string[] = [];
         for (const m of this.config.allMethods) {
             if (m.type === 'instance') {
-                methods.push(this.cppInstanceMethod(m));
-            } else if (m.type === 'static') {
-                methods.push(this.cppStaticMethod(m));
+                methods.push(this.instanceMethod(m));
             }
         }
         return methods.join('\n\n');
     }
 
-    private cppInstanceMethod(methodConfig: MethodConfig): string {
+    private instanceMethod(methodConfig: MethodBinding): string {
         const result: Array<string> = new Array<string>();
         result.push(`${methodConfig.returnType(GeneratedType.cpp)} ${this.config.className(GeneratedType.cpp)}API::${methodConfig.name}(int managedInstanceId, ${methodConfig.getArgDefinitions(GeneratedType.cpp)})`)
         result.push(`{`);
         result.push(`\tTypedObjectManager* tom = GlobalStaticReferences::Instance()->GetTypedObjectManager();`);
         result.push(`\t${this.config.className(GeneratedType.cpp)}* nativeClassInstance = tom->GetInstance<${this.config.className(GeneratedType.cpp)}>(managedInstanceId);`);
         result.push(`\tnativeClassInstance->${methodConfig.name}(${methodConfig.getArgUses(GeneratedType.cpp)});`);
-        result.push(`}`);
-        return result.join('\n');
-    }
-        
-    private cppStaticMethod(methodConfig: MethodConfig): string {
-        const result: Array<string> = new Array<string>();
-        result.push(`${methodConfig.returnType(GeneratedType.cpp)} ${this.config.className(GeneratedType.cpp)}API::${methodConfig.name}(${methodConfig.getArgDefinitions(GeneratedType.cpp)})`);
-        result.push(`{`);
-        result.push(`\t[LOGIC]`);
         result.push(`}`);
         return result.join('\n');
     }

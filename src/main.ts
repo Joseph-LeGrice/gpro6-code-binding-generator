@@ -1,10 +1,10 @@
 import * as path from 'path'
 import * as fs from 'fs-extra'
 import { ArgumentParser } from 'argparse'
-import { GeneratedType } from './config/argument-info';
-import { CsGenerator } from './generation/cs-generator';
-import { CppGenerator } from './generation/cpp-generator';
-import { GenerationConfig } from './config/generation-config';
+import { FileBinding } from './config/file-binding';
+import { GeneratedType } from './config/argument-binding';
+import { CsBindingGenerator } from './generation/cs/cs-binding-generator';
+import { CppBindingGenerator } from './generation/cpp/cpp-binding-generator';
 
 var parser = new ArgumentParser({ addHelp: true });
 parser.addArgument(['--input-directory'], { required: true, help: "The directory containing the JSON code generation provisioning files" });
@@ -43,13 +43,13 @@ async function parseDirectory(inputPath: string) : Promise<void> {
 
 async function parseFile(inputPath: string) : Promise<void> {
     var json = fs.readJsonSync(inputPath);
-    const config = new GenerationConfig(json);
+    const config = new FileBinding(json);
     
-    const cppGen = new CppGenerator(config);
-    const cppHeader = cppGen.cppHeaderFileTemplate();
-    const cppSource = cppGen.cppSourceFileTemplate();
+    const cppGen = new CppBindingGenerator(config);
+    const cppHeader = cppGen.generateHeaderFile();
+    const cppSource = cppGen.generateSourceFile();
     
-    const csGen = new CsGenerator(config);
+    const csGen = new CsBindingGenerator(config);
     const csSource = csGen.csFileTemplate();
     
     const cppHeaderFilePath = path.join(args.output_cpp_directory, `${config.className(GeneratedType.cpp)}API.h`);

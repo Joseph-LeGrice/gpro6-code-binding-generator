@@ -1,20 +1,20 @@
-import { GeneratedType, ArgumentInfo } from "./argument-info";
+import { GeneratedType, ArgumentBinding } from "./argument-binding";
 
-export class MethodConfig
+export class MethodBinding
 {
     private methodType: 'instance' | 'static';
     private methodName: string;
-    private returnTypeInfo: ArgumentInfo;
-    private argInfo: Array<ArgumentInfo>;
+    private returnTypeInfo: ArgumentBinding;
+    private argInfo: Array<ArgumentBinding>;
 
     constructor(json: any) {
         this.methodType = json.methodType;
         this.methodName = json.methodName;
-        this.returnTypeInfo = new ArgumentInfo(json.returnTypeInfo);
+        this.returnTypeInfo = new ArgumentBinding(json.returnTypeInfo);
         
-        this.argInfo = new Array<ArgumentInfo>();
+        this.argInfo = new Array<ArgumentBinding>();
         for (const ai of json.argInfo) {
-            this.argInfo.push(new ArgumentInfo(ai))
+            this.argInfo.push(new ArgumentBinding(ai))
         }
     }
 

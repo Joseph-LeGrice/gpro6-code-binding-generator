@@ -1,25 +1,25 @@
-import { MethodConfig } from "./method-config";
+import { MethodBinding } from "./method-binding";
 import { GeneratedType } from "./argument-info";
 
-export class GenerationConfig
+export class FileBinding
 {
     private nativeIncludePath: string;
     private nativeClassName: string;
     private managedClassName: string;
-    private methods: Array<MethodConfig>;
+    private methods: Array<MethodBinding>;
 
     constructor(json: any) {
         this.nativeIncludePath = json.nativeIncludePath;
         this.nativeClassName = json.nativeClassName;
         this.managedClassName = json.managedClassName;
         
-        this.methods = new Array<MethodConfig>();
+        this.methods = new Array<MethodBinding>();
         for (const m of json.methods) {
-            this.methods.push(new MethodConfig(m));
+            this.methods.push(new MethodBinding(m));
         }
     }
     
-    public get allMethods(): MethodConfig[] { return this.methods; }
+    public get allMethods(): MethodBinding[] { return this.methods; }
     public get includePath(): string { return this.nativeIncludePath; }
     public className(type: GeneratedType): string {
         switch(type)

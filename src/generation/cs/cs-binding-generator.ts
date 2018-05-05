@@ -2,7 +2,7 @@ import { GenerationConfig } from "../config/generation-config";
 import { MethodConfig } from "../config/method-config";
 import { GeneratedType } from "../config/argument-info";
 
-export class CsGenerator 
+export class CsBindingGenerator 
 {
     constructor(public config: GenerationConfig) { }
 

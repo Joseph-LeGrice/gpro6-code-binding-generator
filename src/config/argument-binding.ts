@@ -31,7 +31,7 @@ const ValidArguments = {
     }
 }
 
-export class ArgumentInfo
+export class ArgumentBinding
 {
     private cppValue: string;
     private csValue: string;
