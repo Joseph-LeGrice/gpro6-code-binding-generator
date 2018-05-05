@@ -19,7 +19,7 @@ export class CppGenerator
         result.push(`{`);
         result.push(`\tstatic void RegisterCalls();`);
         result.push(`${this.cppGenerateMethodDefinitions()}`);
-        result.push(`}`);
+        result.push(`};`);
         return result.join('\n');
     }
 
