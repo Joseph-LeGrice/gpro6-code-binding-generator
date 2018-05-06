@@ -1,19 +1,19 @@
 import { FileBinding } from "../../config/file-binding";
 import { MethodBinding } from "../../config/method-binding";
 import { GeneratedType } from "../../config/argument-binding";
+import { BatchFileGenerator } from "./code-generator";
+import * as path from "path";
 
-export class CsBindingGenerator 
+export class CsBindingGenerator extends BatchFileGenerator
 {
-    constructor(public config: FileBinding) { }
-
-    public csFileTemplate(): string {
+    protected generateFile(file: FileBinding): string {
         const result: Array<string> = new Array<string>();
         result.push(`using System.Runtime.CompilerServices;\n`)
 
-        result.push(`class ${this.config.className(GeneratedType.cs)} : ITypedObject`);
+        result.push(`class ${file.className(GeneratedType.cs)} : ITypedObject`);
         result.push(`{`);
         result.push(`\t//// GENERATED`)
-        for (const m of this.config.allMethods) {
+        for (const m of file.allMethods) {
             if (m.type === 'instance') {
                 result.push(`${this.csInstanceMethod(m)}\n`);
             } else if (m.type === 'static') {
@@ -25,6 +25,10 @@ export class CsBindingGenerator
         return result.join('\n');
     }
     
+    protected getFileName(file: FileBinding) {
+        return path.join(this.config.outputCsDirectory, `${file.fileName(GeneratedType.cs)}.cs`);
+    }
+
     private csInstanceMethod(method: MethodBinding): string {
         const result: Array<string> = new Array<string>();
         result.push(`\t[MethodImpl(MethodImplOptions.InternalCall)]`);

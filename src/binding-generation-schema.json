@@ -2,11 +2,14 @@
     "$schema": "http://json-schema.org/draft-06/schema#",
     "title": "Binding Generation Configuration",
     "type": "object",
+    "required": [
+        "namespace",
+        "outputCppDirectory",
+        "outputCsDirectory",
+        "fileBindings"
+    ],
     "properties": {
         "namespace": {
-            "type": "string"
-        },
-        "inputDirectory": {
             "type": "string"
         },
         "outputCppDirectory": {
@@ -41,7 +44,12 @@
                         "items": {
                             "title": "Method Info",
                             "type": "object",
-                            "properties": {
+                            "required": [
+                                "methodType",
+                                "methodName",
+                                "returnTypeInfo",
+                                "argInfo"
+                            ],"properties": {
                                 "methodType": {
                                     "type": "string",
                                     "enum": [

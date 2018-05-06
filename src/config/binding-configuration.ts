@@ -13,7 +13,7 @@ export class BindingCongfiguration
         this.outputCsDirectory = json.outputCsDirectory;
         this.namespace = json.namespace;
         this.fileBindings = new Array<FileBinding>();
-        for (const genJson of json.configs) {
+        for (const genJson of json.fileBindings) {
             this.fileBindings.push(new FileBinding(genJson));
         }
     }

@@ -3,12 +3,14 @@ import * as fs from 'fs-extra'
 import { ArgumentParser } from 'argparse'
 import { FileBinding } from './config/file-binding';
 import { GeneratedType } from './config/argument-binding';
-import { CsBindingGenerator } from './generation/cs/cs-binding-generator';
-import { CppBindingGenerator } from './generation/cpp/cpp-binding-generator';
 import { BindingCongfiguration } from './config/binding-configuration';
+import { CppHeaderGenerator } from './generation/cpp/cpp-header-file-generator';
+import { CppSourceGenerator } from './generation/cpp/cpp-source-file-generator';
+import { CppBindingHeaderGenerator, CppBindingSourceGenerator } from './generation/cpp/cpp-binding-registration-generator';
+import { CsBindingGenerator } from './generation/cpp/cs-binding-generator';
 
 var parser = new ArgumentParser({ addHelp: true });
-parser.addArgument(['CONFIG_FILE'], { required: true, help: "Configuration File for Binding Generation" });
+parser.addArgument(['CONFIG_FILE'], { help: "Configuration File for Binding Generation" });
 
 var args = parser.parseArgs();
 
@@ -20,26 +22,26 @@ async function main() : Promise<void> {
 
     fs.removeSync(config.outputCppDirectory);
     fs.removeSync(config.outputCsDirectory);
-
+    
     fs.ensureDirSync(config.outputCppDirectory);
     fs.ensureDirSync(config.outputCsDirectory);
 
-    const allPromises: Array<Promise<void>> = new Array<Promise<void>>();
-    for (const file of config.fileBindings) {
-        const cppGen = new CppBindingGenerator(file);
-        const cppHeader = cppGen.generateHeaderFile();
-        const cppSource = cppGen.generateSourceFile();
-        
-        const csGen = new CsBindingGenerator(file);
-        const csSource = csGen.csFileTemplate();
-        
-        const cppHeaderFilePath = path.join(config.outputCppDirectory, `${file.className(GeneratedType.cpp)}API.h`);
-        const cppSourceFilePath = path.join(config.outputCppDirectory, `${file.className(GeneratedType.cpp)}API.cpp`);
-        const csSourceFilePath = path.join(config.outputCsDirectory, `${file.className(GeneratedType.cs)}.cs`);
+    const allPromises = new Array<Promise<void>>();
+    
+    const bindingHeaderGen = new CppBindingHeaderGenerator(config);
+    allPromises.push(bindingHeaderGen.generate());
 
-        allPromises.push(fs.writeFile(cppHeaderFilePath, cppHeader));
-        allPromises.push(fs.writeFile(cppSourceFilePath, cppSource));
-        allPromises.push(fs.writeFile(csSourceFilePath, csSource));
-    }
-    await Promise.all(allPromises);    
+    const bindingSourceGen = new CppBindingSourceGenerator(config);
+    allPromises.push(bindingSourceGen.generate());
+
+    const sourceGen = new CppSourceGenerator(config);
+    allPromises.push(sourceGen.generate());
+
+    const headerGen = new CppHeaderGenerator(config);
+    allPromises.push(headerGen.generate());
+    
+    const csGen = new CsBindingGenerator(config);
+    allPromises.push(csGen.generate());
+
+    await Promise.all(allPromises);
 }
