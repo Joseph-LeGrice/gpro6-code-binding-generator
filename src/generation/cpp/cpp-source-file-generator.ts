@@ -10,7 +10,7 @@ export class CppSourceGenerator extends BatchFileGenerator
     {
         const result: Array<string> = new Array<string>();
         result.push(`#include "stdafx.h"`);
-        result.push(`#include "${file.fileName(GeneratedType.cpp)}.h"`);
+        result.push(`#include "${file.name}API.h"`);
         result.push(`#include "Engine/Core/GlobalStaticReferences.h"`);
         result.push(`#include "Engine/Core/RTTI/TypedObjectManager.h"`);
         result.push(`#include "${file.includePath}"\n`);
@@ -21,13 +21,13 @@ export class CppSourceGenerator extends BatchFileGenerator
     }
 
     protected getFileName(file: FileBinding) {
-        return path.join(this.config.outputCppDirectory, `${file.fileName(GeneratedType.cpp)}.cpp`);
+        return path.join(this.config.outputCppDirectory, `${file.name}API.cpp`);
     }
 
     private registerCalls(file: FileBinding): string
     {        
         const result: Array<string> = new Array<string>();
-        result.push(`void ${file.fileName(GeneratedType.cpp)}::RegisterCalls()`);
+        result.push(`void ${this.config.namespace}::${file.name}API::RegisterCalls()`);
         result.push(`{`);
         for (const m of file.allMethods)
         {
@@ -46,12 +46,12 @@ export class CppSourceGenerator extends BatchFileGenerator
 
     private addInstanceMonoCall(file: FileBinding, method: MethodBinding): string
     {
-        return `\tmono_add_internal_call("${file.className(GeneratedType.cs)}::${method.name}(int managedInstanceId, ${method.getArgDefinitions(GeneratedType.cs)})", ${file.fileName(GeneratedType.cpp)}::${method.name});`
+        return `\tmono_add_internal_call("${file.name}::${method.name}(int managedInstanceId, ${method.getArgDefinitions(GeneratedType.cs)})", ${this.config.namespace}::${file.name}API::${method.name});`
     }
 
     private addStaticMonoCall(file: FileBinding, method: MethodBinding): string
     {
-        return `\tmono_add_internal_call("${file.className(GeneratedType.cs)}::${method.name}", ${file.fileName(GeneratedType.cpp)}::${method.name});`
+        return `\tmono_add_internal_call("${file.name}::${method.name}", ${this.config.namespace}::${file.name}API::${method.name});`
     }
 
     private generateMethodImplementations(config: FileBinding): string {
@@ -64,12 +64,12 @@ export class CppSourceGenerator extends BatchFileGenerator
         return methods.join('\n\n');
     }
 
-    private instanceMethod(config: FileBinding, methodConfig: MethodBinding): string {
+    private instanceMethod(file: FileBinding, methodConfig: MethodBinding): string {
         const result: Array<string> = new Array<string>();
-        result.push(`${methodConfig.returnType(GeneratedType.cpp)} ${config.fileName(GeneratedType.cpp)}::${methodConfig.name}(int managedInstanceId, ${methodConfig.getArgDefinitions(GeneratedType.cpp)})`)
+        result.push(`${methodConfig.returnType(GeneratedType.cpp)} ${this.config.namespace}::${file.name}API::${methodConfig.name}(int managedInstanceId, ${methodConfig.getArgDefinitions(GeneratedType.cpp)})`)
         result.push(`{`);
         result.push(`\tTypedObjectManager* tom = GlobalStaticReferences::Instance()->GetTypedObjectManager();`);
-        result.push(`\t${config.className(GeneratedType.cpp)}* nativeClassInstance = tom->GetInstance<${config.className(GeneratedType.cpp)}>(managedInstanceId);`);
+        result.push(`\t${file.name}* nativeClassInstance = tom->GetInstance<${file.name}>(managedInstanceId);`);
         result.push(`\tnativeClassInstance->${methodConfig.name}(${methodConfig.getArgUses(GeneratedType.cpp)});`);
         result.push(`}`);
         return result.join('\n');

@@ -16,17 +16,19 @@ export class CppHeaderGenerator extends BatchFileGenerator
         result.push(`#include <mono/metadata/object.h>`);
         result.push(`#pragma warning(pop)\n`);
 
-        result.push(`class ${file.fileName(GeneratedType.cpp)}`);
+        result.push(`namespace ${this.config.namespace}`);
         result.push(`{`);
-        result.push(`public:`);
-        result.push(`\tstatic void RegisterCalls();`);
+        result.push(`\tnamespace ${file.name}API`);
+        result.push(`\t{`);
+        result.push(`\t\textern void RegisterCalls();`);
         result.push(`${this.generateMethodDefinitions(file)}`);
+        result.push(`\t};`);
         result.push(`};`);
         return result.join('\n');
     }
 
     protected getFileName(file: FileBinding) {
-        return path.join(this.config.outputCppDirectory, `${file.fileName(GeneratedType.cpp)}.h`);
+        return path.join(this.config.outputCppDirectory, `${file.name}API.h`);
     }
 
     private generateMethodDefinitions(file: FileBinding): string
@@ -48,11 +50,11 @@ export class CppHeaderGenerator extends BatchFileGenerator
 
     private instanceMethodDefinition(method: MethodBinding): string
     {
-        return `\tstatic ${method.returnType(GeneratedType.cpp)} ${method.name}(int managedInstanceId, ${method.getArgDefinitions(GeneratedType.cpp)});`
+        return `\t\textern ${method.returnType(GeneratedType.cpp)} ${method.name}(int managedInstanceId, ${method.getArgDefinitions(GeneratedType.cpp)});`
     }
 
     private staticMethodDefinition(method: MethodBinding): string
     {
-        return `\tstatic ${method.returnType(GeneratedType.cpp)} ${method.name}(${method.getArgDefinitions(GeneratedType.cpp)});`
+        return `\t\textern ${method.returnType(GeneratedType.cpp)} ${method.name}(${method.getArgDefinitions(GeneratedType.cpp)});`
     }
 }

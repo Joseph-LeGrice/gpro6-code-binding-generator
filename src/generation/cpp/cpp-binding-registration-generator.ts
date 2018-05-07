@@ -33,14 +33,16 @@ export class CppBindingSourceGenerator extends Generator
         result.push(`#include "${this.config.namespace}BindingRegistration.h"`);
         for (const file of this.config.fileBindings)
         {
-            result.push(`#include "${file.fileName(GeneratedType.cpp)}.h"`);
+            result.push(`#include "${file.name}API.h"`);
         }
 
-        result.push(`\nvoid ${this.config.namespace}::RegisterAllCalls()`);
+        result.push(`\nusing namespace ${this.config.namespace};\n`);
+
+        result.push(`void ${this.config.namespace}::RegisterAllCalls()`);
         result.push(`{`);
         for (const file of this.config.fileBindings)
         {
-            result.push(`\t${file.fileName(GeneratedType.cpp)}::RegisterCalls();`);
+            result.push(`\t${file.name}API::RegisterCalls();`);
         }
         result.push(`}`);        
         

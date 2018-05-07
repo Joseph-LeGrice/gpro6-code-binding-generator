@@ -10,7 +10,7 @@ export class CsBindingGenerator extends BatchFileGenerator
         const result: Array<string> = new Array<string>();
         result.push(`using System.Runtime.CompilerServices;\n`)
 
-        result.push(`class ${file.className(GeneratedType.cs)} : ITypedObject`);
+        result.push(`class ${file.name} : ITypedObject`);
         result.push(`{`);
         result.push(`\t//// GENERATED`)
         for (const m of file.allMethods) {
@@ -26,7 +26,7 @@ export class CsBindingGenerator extends BatchFileGenerator
     }
     
     protected getFileName(file: FileBinding) {
-        return path.join(this.config.outputCsDirectory, `${file.fileName(GeneratedType.cs)}.cs`);
+        return path.join(this.config.outputCsDirectory, `${file.name}.cs`);
     }
 
     private csInstanceMethod(method: MethodBinding): string {

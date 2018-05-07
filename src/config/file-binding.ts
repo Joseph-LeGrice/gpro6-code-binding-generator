@@ -4,15 +4,13 @@ import { GeneratedType } from "./argument-binding";
 export class FileBinding
 {
     public includePath: string;
-    private nativeClassName: string;
-    private managedClassName: string;
+    public name: string;
     private methods: Array<MethodBinding>;
 
     constructor(json: any)
     {
         this.includePath = json.includePath;
-        this.nativeClassName = json.nativeClassName;
-        this.managedClassName = json.managedClassName;
+        this.name = json.name;
         
         this.methods = new Array<MethodBinding>();
         for (const m of json.methods) {
@@ -21,26 +19,4 @@ export class FileBinding
     }
     
     public get allMethods(): MethodBinding[] { return this.methods; }
-        
-    public fileName(type: GeneratedType): string
-    {
-        switch(type)
-        {
-            case GeneratedType.cpp:
-                return `${this.nativeClassName}API`;
-            case GeneratedType.cs:
-                return this.managedClassName;
-        }
-    }
-    
-    public className(type: GeneratedType): string
-    {
-        switch(type)
-        {
-            case GeneratedType.cpp:
-                return this.nativeClassName;
-            case GeneratedType.cs:
-                return this.managedClassName;
-        }
-    }
 }
