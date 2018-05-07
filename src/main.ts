@@ -18,7 +18,13 @@ main();
 
 async function main() : Promise<void> {
     var json = fs.readJsonSync(args.CONFIG_FILE);
-    const config: BindingCongfiguration = new BindingCongfiguration(json);
+    
+    const configFileDir = path.dirname(args.CONFIG_FILE);
+    const config: BindingCongfiguration = new BindingCongfiguration(json, configFileDir);
+
+    console.log("[CodeBindingGenerator] Loaded Configuration");
+    console.log(`[CodeBindingGenerator] config.outputCppDirectory: ${config.outputCppDirectory}`);
+    console.log(`[CodeBindingGenerator] config.outputCsDirectory: ${config.outputCsDirectory}`);
 
     fs.removeSync(config.outputCppDirectory);
     fs.removeSync(config.outputCsDirectory);

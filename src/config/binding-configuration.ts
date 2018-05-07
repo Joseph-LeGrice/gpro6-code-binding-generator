@@ -1,3 +1,4 @@
+import * as path from 'path'
 import { FileBinding } from "./file-binding";
 
 export class BindingCongfiguration
@@ -8,9 +9,9 @@ export class BindingCongfiguration
     public outputCppDirectory: string;
     public outputCsDirectory: string;
 
-    constructor(json: any) {
-        this.outputCppDirectory = json.outputCppDirectory;
-        this.outputCsDirectory = json.outputCsDirectory;
+    constructor(json: any, configFilePath: string) {
+        this.outputCppDirectory = path.resolve(configFilePath, json.outputCppDirectory);
+        this.outputCsDirectory = path.resolve(configFilePath, json.outputCsDirectory);
         this.namespace = json.namespace;
         this.fileBindings = new Array<FileBinding>();
         for (const genJson of json.fileBindings) {
