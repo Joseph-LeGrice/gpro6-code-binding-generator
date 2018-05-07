@@ -26,9 +26,6 @@ async function main() : Promise<void> {
     console.log(`[CodeBindingGenerator] config.outputCppDirectory: ${config.outputCppDirectory}`);
     console.log(`[CodeBindingGenerator] config.outputCsDirectory: ${config.outputCsDirectory}`);
 
-    fs.removeSync(config.outputCppDirectory);
-    fs.removeSync(config.outputCsDirectory);
-    
     fs.ensureDirSync(config.outputCppDirectory);
     fs.ensureDirSync(config.outputCsDirectory);
 
