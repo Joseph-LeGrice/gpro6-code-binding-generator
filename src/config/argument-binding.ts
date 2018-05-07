@@ -9,6 +9,10 @@ const ValidArguments = {
         cpp: 'void',
         cs: 'void'
     },
+    'object' : {
+        cpp: 'MonoObject*',
+        cs: 'System.Object'
+    },
     'int' : {
         cpp: 'int',
         cs: 'int'
@@ -26,7 +30,7 @@ const ValidArguments = {
         cs: 'char'
     },
     'string': {
-        cpp: 'const wchar_t*',
+        cpp: 'MonoString*',
         cs: 'string'
     }
 }
