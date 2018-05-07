@@ -26,7 +26,7 @@ export class CsBindingGenerator extends BatchFileGenerator
     }
     
     protected getFileName(file: FileBinding) {
-        return path.join(this.config.outputCsDirectory, `${file.name}.cs`);
+        return path.resolve(this.config.outputCsDirectory, file.subdirectory, `${file.name}.cs`);
     }
 
     private csInstanceMethod(method: MethodBinding): string {

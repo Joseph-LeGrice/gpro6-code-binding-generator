@@ -28,7 +28,7 @@ export class CppHeaderGenerator extends BatchFileGenerator
     }
 
     protected getFileName(file: FileBinding) {
-        return path.join(this.config.outputCppDirectory, `${file.name}API.h`);
+        return path.resolve(this.config.outputCppDirectory, file.subdirectory, `${file.name}API.h`);
     }
 
     private generateMethodDefinitions(file: FileBinding): string

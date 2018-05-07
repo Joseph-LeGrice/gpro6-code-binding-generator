@@ -15,7 +15,7 @@ export class CppBindingHeaderGenerator extends Generator
         
         result.push(`namespace ${this.config.namespace}`);
         result.push(`{`);
-        result.push(`\tvoid RegisterAllCalls();`);
+        result.push(`\textern void RegisterAllCalls();`);
         result.push(`};`);
         
         const resultText = result.join('\n');
@@ -33,7 +33,11 @@ export class CppBindingSourceGenerator extends Generator
         result.push(`#include "${this.config.namespace}BindingRegistration.h"`);
         for (const file of this.config.fileBindings)
         {
-            result.push(`#include "${file.name}API.h"`);
+            if(file.subdirectory) {
+                result.push(`#include "${file.subdirectory}/${file.name}API.h"`);
+            } else {
+                result.push(`#include "${file.name}API.h"`);                
+            }
         }
 
         result.push(`\nusing namespace ${this.config.namespace};\n`);

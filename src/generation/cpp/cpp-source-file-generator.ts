@@ -23,7 +23,7 @@ export class CppSourceGenerator extends BatchFileGenerator
     }
 
     protected getFileName(file: FileBinding) {
-        return path.join(this.config.outputCppDirectory, `${file.name}API.cpp`);
+        return path.resolve(this.config.outputCppDirectory, file.subdirectory, `${file.name}API.cpp`);
     }
 
     private registerCalls(file: FileBinding): string

@@ -1,4 +1,5 @@
 import * as fs from 'fs-extra'
+import * as path from 'path'
 import { BindingCongfiguration } from "../../config/binding-configuration";
 import { FileBinding } from "../../config/file-binding";
 
@@ -16,7 +17,9 @@ export abstract class BatchFileGenerator extends Generator
         const allPromises: Array<Promise<void>> = new Array<Promise<void>>();
         for (const fileConfig of this.config.fileBindings) {
             const generatedFile = this.generateFile(fileConfig);
-            allPromises.push(fs.writeFile(this.getFileName(fileConfig), generatedFile));
+            const filePath = this.getFileName(fileConfig);
+            fs.ensureDirSync(path.dirname(filePath));
+            allPromises.push(fs.writeFile(filePath, generatedFile));
         }
         await Promise.all(allPromises);    
     }
