@@ -34,7 +34,7 @@ export class CppHeaderGenerator extends BatchFileGenerator
     private generateMethodDefinitions(file: FileBinding): string
     {
         const result: Array<string> = new Array<string>();
-        for (const m of file.allMethods)
+        for (const m of file.methods)
         {
             if (m.type === 'instance')
             {

@@ -12,8 +12,10 @@ export class CppSourceGenerator extends BatchFileGenerator
         result.push(`#include "stdafx.h"`);
         result.push(`#include "${file.name}API.h"`);
         result.push(`#include "Engine/Core/GlobalStaticReferences.h"`);
-        result.push(`#include "Engine/Core/RTTI/TypedObjectManager.h"`);
-        result.push(`#include "${file.includePath}"\n`);
+        if (file.includePath) {
+            result.push(`#include "${file.includePath}"\n`);
+        }
+        result.push(`#include "Engine/Core/RTTI/TypedObjectManager.h"\n`);
 
         result.push(`${this.registerCalls(file)}\n`);
         result.push(`${this.generateMethodImplementations(file)}`);
@@ -29,7 +31,7 @@ export class CppSourceGenerator extends BatchFileGenerator
         const result: Array<string> = new Array<string>();
         result.push(`void ${this.config.namespace}::${file.name}API::RegisterCalls()`);
         result.push(`{`);
-        for (const m of file.allMethods)
+        for (const m of file.methods)
         {
             if (m.type === 'instance')
             {
@@ -56,21 +58,36 @@ export class CppSourceGenerator extends BatchFileGenerator
 
     private generateMethodImplementations(config: FileBinding): string {
         const methods: string[] = [];
-        for (const m of config.allMethods) {
-            if (m.type === 'instance') {
+        for (const m of config.methods) {
+            if (m.type === 'instance')
+            {
                 methods.push(this.instanceMethod(config, m));
+            }
+            else if (m.type === 'static')
+            {
+                methods.push(this.staticMethod(config, m));
             }
         }
         return methods.join('\n\n');
     }
 
-    private instanceMethod(file: FileBinding, methodConfig: MethodBinding): string {
+    private instanceMethod(file: FileBinding, methodConfig: MethodBinding): string
+    {
         const result: Array<string> = new Array<string>();
         result.push(`${methodConfig.returnType(GeneratedType.cpp)} ${this.config.namespace}::${file.name}API::${methodConfig.name}(int managedInstanceId, ${methodConfig.getArgDefinitions(GeneratedType.cpp)})`)
         result.push(`{`);
         result.push(`\tTypedObjectManager* tom = GlobalStaticReferences::Instance()->GetTypedObjectManager();`);
         result.push(`\t${file.name}* nativeClassInstance = tom->GetInstance<${file.name}>(managedInstanceId);`);
         result.push(`\tnativeClassInstance->${methodConfig.name}(${methodConfig.getArgUses(GeneratedType.cpp)});`);
+        result.push(`}`);
+        return result.join('\n');
+    }
+
+    private staticMethod(file: FileBinding, methodConfig: MethodBinding): string
+    {
+        const result: Array<string> = new Array<string>();
+        result.push(`${methodConfig.returnType(GeneratedType.cpp)} ${this.config.namespace}::${file.name}API::${methodConfig.name}(${methodConfig.getArgDefinitions(GeneratedType.cpp)})`)
+        result.push(`{`);
         result.push(`}`);
         return result.join('\n');
     }

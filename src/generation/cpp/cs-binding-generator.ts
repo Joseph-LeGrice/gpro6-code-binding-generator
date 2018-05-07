@@ -13,7 +13,7 @@ export class CsBindingGenerator extends BatchFileGenerator
         result.push(`class ${file.name} : ITypedObject`);
         result.push(`{`);
         result.push(`\t//// GENERATED`)
-        for (const m of file.allMethods) {
+        for (const m of file.methods) {
             if (m.type === 'instance') {
                 result.push(`${this.csInstanceMethod(m)}\n`);
             } else if (m.type === 'static') {
