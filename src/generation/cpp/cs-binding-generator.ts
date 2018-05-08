@@ -10,7 +10,7 @@ export class CsBindingGenerator extends BatchFileGenerator
         const result: Array<string> = new Array<string>();
         result.push(`using System.Runtime.CompilerServices;\n`)
 
-        result.push(`class ${file.name} : ITypedObject`);
+        result.push(`public class ${file.name} : ITypedObject`);
         result.push(`{`);
         result.push(`\t//// GENERATED`)
         for (const m of file.methods) {
