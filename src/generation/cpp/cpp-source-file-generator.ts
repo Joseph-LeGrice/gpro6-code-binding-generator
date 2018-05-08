@@ -48,14 +48,19 @@ export class CppSourceGenerator extends BatchFileGenerator
 
     private addInstanceMonoCall(file: FileBinding, method: MethodBinding): string
     {
-        return `\tmono_add_internal_call("${file.name}::${method.name}(int managedInstanceId, ${method.getArgDefinitions(GeneratedType.cs)})", ${this.config.namespace}::${file.name}API::${method.name});`
+        let args: string[] = [];
+        for (let i=0; i < method.argInfo.length; i++) {
+            const arg = method.argInfo[i];
+            args.push(`${arg.value(GeneratedType.cs)}`);
+        }
+        return `\tmono_add_internal_call("${file.name}::${method.name}(int,${args.join(',')})", ${this.config.namespace}::${file.name}API::${method.name});`
     }
 
     private addStaticMonoCall(file: FileBinding, method: MethodBinding): string
     {
         return `\tmono_add_internal_call("${file.name}::${method.name}", ${this.config.namespace}::${file.name}API::${method.name});`
     }
-
+    
     private generateMethodImplementations(config: FileBinding): string {
         const methods: string[] = [];
         for (const m of config.methods) {

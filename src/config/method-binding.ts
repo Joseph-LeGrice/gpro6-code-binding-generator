@@ -2,10 +2,10 @@ import { GeneratedType, ArgumentBinding } from "./argument-binding";
 
 export class MethodBinding
 {
-    private methodType: 'instance' | 'static';
-    private methodName: string;
-    private returnTypeInfo: ArgumentBinding;
-    private argInfo: Array<ArgumentBinding>;
+    public methodType: 'instance' | 'static';
+    public methodName: string;
+    public returnTypeInfo: ArgumentBinding;
+    public argInfo: Array<ArgumentBinding>;
 
     constructor(json: any) {
         this.methodType = json.methodType;
