@@ -46,5 +46,13 @@ export const ValidArguments: { [key: string]: ArgumentInfo } = {
             toType: 'std::wstring',
             withMethod: 'MonoMarshall::GetUTF16String'
         }
+    },
+    'array-string': {
+        cpp: 'MonoArray*',
+        cs: 'string',
+        marshall: {
+            toType: 'std::vector<std::wstring>',
+            withMethod: 'MonoMarshall::GetStringVector'
+        }
     }
 }
