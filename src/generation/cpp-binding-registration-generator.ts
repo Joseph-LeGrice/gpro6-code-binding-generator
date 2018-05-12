@@ -1,7 +1,5 @@
-import { FileBinding } from "../config/file-binding";
 import { GeneratedType } from "../config/argument-binding";
-import { MethodBinding } from "../config/method-binding";
-import { BindingCongfiguration } from "../config/binding-configuration";
+import { BindingConfiguration, FileBinding, MethodBinding } from "../config/binding-config";
 import { Generator, SingleFileGenerator, GeneratorUtil } from "./code-generator";
 import * as fs from 'fs-extra'
 import * as path from 'path'

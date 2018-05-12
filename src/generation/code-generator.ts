@@ -1,10 +1,9 @@
 import * as fs from 'fs-extra'
 import * as path from 'path'
-import { BindingCongfiguration } from "../config/binding-configuration";
-import { FileBinding } from "../config/file-binding";
+import { BindingConfiguration, FileBinding } from "../config/binding-config";
 
 export abstract class Generator {
-    constructor(protected config: BindingCongfiguration) { }
+    constructor(protected config: BindingConfiguration) { }
     public abstract async generate(): Promise<void>;
 }
 

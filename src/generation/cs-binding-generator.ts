@@ -1,5 +1,4 @@
-import { FileBinding } from "../config/file-binding";
-import { MethodBinding } from "../config/method-binding";
+import { FileBinding, MethodBinding, MethodBindingHelpers } from "../config/binding-config";
 import { GeneratedType } from "../config/argument-binding";
 import { BatchFileGenerator, GeneratorUtil } from "./code-generator";
 import * as path from "path";
@@ -21,9 +20,9 @@ export class CsBindingGenerator extends BatchFileGenerator
     protected appendMethodInfo(file: FileBinding, fileText: string): string {
         let result = GeneratorUtil.clear(fileText);
         for (const m of file.methods) {
-            if (m.type === 'instance') {
+            if (m.methodType === 'instance') {
                 result = GeneratorUtil.insert(`${this.instanceMethod(m)}\n`, result);
-            } else if (m.type === 'static') {
+            } else if (m.methodType === 'static') {
                 result = GeneratorUtil.insert(`${this.staticMethod(m)}\n`, result);
             }
         }
@@ -37,10 +36,10 @@ export class CsBindingGenerator extends BatchFileGenerator
     private instanceMethod(method: MethodBinding): string {
         const result: Array<string> = new Array<string>();
         result.push(`\t[MethodImpl(MethodImplOptions.InternalCall)]`);
-        result.push(`\tprivate extern static ${method.returnType(GeneratedType.cs)} ${method.name}(int instanceid, ${method.getArgDefinitions(GeneratedType.cs)});`);
-        result.push(`\tpublic ${method.returnType(GeneratedType.cs)} ${method.name}(${method.getArgDefinitions(GeneratedType.cs)})`);
+        result.push(`\tprivate extern static ${MethodBindingHelpers.returnType(method, GeneratedType.cs)} ${method.methodName}(int instanceid, ${MethodBindingHelpers.getArgDefinitions(method, GeneratedType.cs)});`);
+        result.push(`\tpublic ${MethodBindingHelpers.returnType(method, GeneratedType.cs)} ${method.methodName}(${MethodBindingHelpers.getArgDefinitions(method, GeneratedType.cs)})`);
         result.push(`\t{`);
-        result.push(`\t\t${method.name}(InstanceID, ${method.getArgUses(GeneratedType.cs)});`);
+        result.push(`\t\t${method.methodName}(InstanceID, ${MethodBindingHelpers.getArgUses(method, GeneratedType.cs)});`);
         result.push(`\t}`);
         return result.join('\n');
     }
@@ -48,7 +47,7 @@ export class CsBindingGenerator extends BatchFileGenerator
     private staticMethod(method: MethodBinding): string {
         const result: Array<string> = new Array<string>()
         result.push(`\t[MethodImplAttribute(MethodImplOptions.InternalCall)]`);
-        result.push(`\tpublic extern static ${method.returnType(GeneratedType.cs)} ${method.name}(${method.getArgDefinitions(GeneratedType.cs)});`);
+        result.push(`\tpublic extern static ${MethodBindingHelpers.returnType(method, GeneratedType.cs)} ${method.methodName}(${MethodBindingHelpers.getArgDefinitions(method, GeneratedType.cs)});`);
         return result.join('\n');
     }
 }

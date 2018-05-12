@@ -1,6 +1,5 @@
-import { FileBinding } from "../config/file-binding";
 import { GeneratedType } from "../config/argument-binding";
-import { MethodBinding } from "../config/method-binding";
+import { FileBinding, MethodBinding, MethodBindingHelpers } from "../config/binding-config";
 import { BatchFileGenerator, GeneratorUtil } from "./code-generator";
 import * as path from "path";
 
@@ -30,9 +29,9 @@ export class CppHeaderGenerator extends BatchFileGenerator
         let result = GeneratorUtil.clear(fileText);
         result = GeneratorUtil.insert(`\t\textern void RegisterCalls();`, result);
         for (const m of file.methods) {
-            if (m.type === 'instance') {
+            if (m.methodType === 'instance') {
                 result = GeneratorUtil.insert(this.instanceMethodDefinition(m), result);
-            } else if (m.type === 'static') {
+            } else if (m.methodType === 'static') {
                 result = GeneratorUtil.insert(this.staticMethodDefinition(m), result);
             }
         }
@@ -44,10 +43,10 @@ export class CppHeaderGenerator extends BatchFileGenerator
     }
 
     private instanceMethodDefinition(method: MethodBinding): string {
-        return `\t\textern ${method.returnType(GeneratedType.cpp)} ${method.name}(int managedInstanceId, ${method.getArgDefinitions(GeneratedType.cpp)});`
+        return `\t\textern ${MethodBindingHelpers.returnType(method, GeneratedType.cpp)} ${method.methodName}(int managedInstanceId, ${MethodBindingHelpers.getArgDefinitions(method, GeneratedType.cpp)});`
     }
 
     private staticMethodDefinition(method: MethodBinding): string {
-        return `\t\textern ${method.returnType(GeneratedType.cpp)} ${method.name}(${method.getArgDefinitions(GeneratedType.cpp)});`
+        return `\t\textern ${MethodBindingHelpers.returnType(method, GeneratedType.cpp)} ${method.methodName}(${MethodBindingHelpers.getArgDefinitions(method, GeneratedType.cpp)});`
     }
 }

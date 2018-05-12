@@ -1,6 +1,5 @@
-import { FileBinding } from "../config/file-binding";
 import { GeneratedType } from "../config/argument-binding";
-import { MethodBinding } from "../config/method-binding";
+import { FileBinding, MethodBinding, MethodBindingHelpers } from "../config/binding-config";
 import { BatchFileGenerator, GeneratorUtil } from "./code-generator";
 import * as path from 'path'
 
@@ -14,6 +13,7 @@ export class CppSourceGenerator extends BatchFileGenerator
         if (file.includePath) {
             result.push(`#include "${file.includePath}"\n`);
         }
+        result.push(`#include "Engine/Core/Scripting/MonoMarshallHelpers.h"`);
         result.push(`#include "Engine/Core/RTTI/TypedObjectManager.h"\n`);
         result.push(GeneratorUtil.delimiter);
         result.push(GeneratorUtil.delimiter);
@@ -37,9 +37,9 @@ export class CppSourceGenerator extends BatchFileGenerator
         result.push(`void ${this.config.namespace}::${file.name}API::RegisterCalls()`);
         result.push(`{`);
         for (const m of file.methods) {
-            if (m.type === 'instance') {
+            if (m.methodType === 'instance') {
                 result.push(this.addInstanceMonoCall(file, m));
-            } else if (m.type === 'static') {
+            } else if (m.methodType === 'static') {
                 result.push(this.addStaticMonoCall(file, m));
             }
         }
@@ -51,19 +51,19 @@ export class CppSourceGenerator extends BatchFileGenerator
         let args: string[] = [];
         for (let i=0; i < method.argInfo.length; i++) {
             const arg = method.argInfo[i];
-            args.push(`${arg.value(GeneratedType.cs)}`);
+            args.push(`${MethodBindingHelpers.getArgument(arg, GeneratedType.cs)}`);
         }
-        return `\tmono_add_internal_call("${file.name}::${method.name}(int,${args.join(',')})", ${this.config.namespace}::${file.name}API::${method.name});`
+        return `\tmono_add_internal_call("${file.name}::${method.methodName}(int,${args.join(',')})", ${this.config.namespace}::${file.name}API::${method.methodName});`
     }
 
     private addStaticMonoCall(file: FileBinding, method: MethodBinding): string {
-        return `\tmono_add_internal_call("${file.name}::${method.name}", ${this.config.namespace}::${file.name}API::${method.name});`
+        return `\tmono_add_internal_call("${file.name}::${method.methodName}", ${this.config.namespace}::${file.name}API::${method.methodName});`
     }
     
     private generateMethodImplementations(config: FileBinding): string {
         const methods: string[] = [];
         for (const m of config.methods) {
-            if (m.type === 'instance') {
+            if (m.methodType === 'instance') {
                 methods.push(this.instanceMethod(config, m));
             }
         }
@@ -72,11 +72,11 @@ export class CppSourceGenerator extends BatchFileGenerator
 
     private instanceMethod(file: FileBinding, methodConfig: MethodBinding): string {
         const result: Array<string> = new Array<string>();
-        result.push(`${methodConfig.returnType(GeneratedType.cpp)} ${this.config.namespace}::${file.name}API::${methodConfig.name}(int managedInstanceId, ${methodConfig.getArgDefinitions(GeneratedType.cpp)})`)
+        result.push(`${MethodBindingHelpers.returnType(methodConfig, GeneratedType.cpp)} ${this.config.namespace}::${file.name}API::${methodConfig.methodName}(int managedInstanceId, ${MethodBindingHelpers.getArgDefinitions(methodConfig, GeneratedType.cpp)})`)
         result.push(`{`);
         result.push(`\tTypedObjectManager* tom = GlobalStaticReferences::Instance()->GetTypedObjectManager();`);
         result.push(`\t${file.name}* nativeClassInstance = tom->GetInstance<${file.name}>(managedInstanceId);`);
-        result.push(`\tnativeClassInstance->${methodConfig.name}(${methodConfig.getArgUses(GeneratedType.cpp)});`);
+        result.push(`\tnativeClassInstance->${methodConfig.methodName}(${MethodBindingHelpers.getArgUses(methodConfig, GeneratedType.cpp)});`);
         result.push(`}`);
         return result.join('\n');
     }

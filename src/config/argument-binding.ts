@@ -1,11 +1,21 @@
-export enum GeneratedType
-{
+export enum GeneratedType {
     cpp,
     cs
 }
 
-const ValidArguments = {
-    'void': {
+export interface MarshallInfo {
+    toType: string;
+    withMethod: string;
+}
+
+export interface ArgumentInfo {
+    cpp: string;
+    cs: string;
+    marshall?: MarshallInfo;
+}
+
+export const ValidArguments: { [key: string]: ArgumentInfo } = {
+    'void':  {
         cpp: 'void',
         cs: 'void'
     },
@@ -31,27 +41,10 @@ const ValidArguments = {
     },
     'string': {
         cpp: 'MonoString*',
-        cs: 'string'
-    }
-}
-
-export class ArgumentBinding
-{
-    private cppValue: string;
-    private csValue: string;
-    
-    constructor(arg: string) {
-        this.cppValue = ValidArguments[arg].cpp;
-        this.csValue = ValidArguments[arg].cs;
-    }
-
-    public value(type: GeneratedType): string {
-        switch(type)
-        {
-            case GeneratedType.cpp:
-                return this.cppValue;
-            case GeneratedType.cs:
-                return this.csValue;
+        cs: 'string',
+        marshall: {
+            toType: 'std::wstring',
+            withMethod: 'MonoMarshall::GetUTF16String'
         }
     }
 }

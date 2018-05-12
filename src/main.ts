@@ -1,9 +1,8 @@
 import * as path from 'path'
 import * as fs from 'fs-extra'
 import { ArgumentParser } from 'argparse'
-import { FileBinding } from './config/file-binding';
+import { BindingConfiguration, FileBinding } from './config/binding-config';
 import { GeneratedType } from './config/argument-binding';
-import { BindingCongfiguration } from './config/binding-configuration';
 import { CppHeaderGenerator } from './generation/cpp-header-file-generator';
 import { CppSourceGenerator } from './generation/cpp-source-file-generator';
 import { CppBindingHeaderGenerator, CppBindingSourceGenerator } from './generation/cpp-binding-registration-generator';
@@ -17,10 +16,10 @@ var args = parser.parseArgs();
 main();
 
 async function main() : Promise<void> {
-    var json = fs.readJsonSync(args.CONFIG_FILE);
-    
+    var config: BindingConfiguration = fs.readJsonSync(args.CONFIG_FILE);
     const configFileDir = path.dirname(args.CONFIG_FILE);
-    const config: BindingCongfiguration = new BindingCongfiguration(json, configFileDir);
+    config.outputCppDirectory = path.resolve(configFileDir, config.outputCppDirectory);
+    config.outputCsDirectory = path.resolve(configFileDir, config.outputCsDirectory);
 
     console.log("[CodeBindingGenerator] Loaded Configuration");
     console.log(`[CodeBindingGenerator] config.outputCppDirectory: ${config.outputCppDirectory}`);
