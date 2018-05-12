@@ -72,7 +72,14 @@ export class CppSourceGenerator extends BatchFileGenerator
 
     private instanceMethod(file: FileBinding, methodConfig: MethodBinding): string {
         const result: Array<string> = new Array<string>();
-        result.push(`${MethodBindingHelpers.returnType(methodConfig, GeneratedType.cpp)} ${this.config.namespace}::${file.name}API::${methodConfig.methodName}(int managedInstanceId, ${MethodBindingHelpers.getArgDefinitions(methodConfig, GeneratedType.cpp)})`)
+
+        let args = MethodBindingHelpers.getArgDefinitions(methodConfig, GeneratedType.cpp);
+        if (args.length > 0) {
+            result.push(`${MethodBindingHelpers.returnType(methodConfig, GeneratedType.cpp)} ${this.config.namespace}::${file.name}API::${methodConfig.methodName}(int managedInstanceId, ${MethodBindingHelpers.getArgDefinitions(methodConfig, GeneratedType.cpp)})`)
+        } else {
+            result.push(`${MethodBindingHelpers.returnType(methodConfig, GeneratedType.cpp)} ${this.config.namespace}::${file.name}API::${methodConfig.methodName}(int managedInstanceId)`)
+        }
+
         result.push(`{`);
 
         for (let i=0; i<methodConfig.argInfo.length; i++) {
@@ -85,7 +92,15 @@ export class CppSourceGenerator extends BatchFileGenerator
 
         result.push(`\tTypedObjectManager* tom = GlobalStaticReferences::Instance()->GetTypedObjectManager();`);
         result.push(`\t${file.name}* nativeClassInstance = tom->GetInstance<${file.name}>(managedInstanceId);`);
-        result.push(`\tnativeClassInstance->${methodConfig.methodName}(${MethodBindingHelpers.getArgUses(methodConfig, GeneratedType.cpp)});`);
+        
+        const call = new Array<string>();
+        call.push('\t');
+        if (methodConfig.returnTypeInfo !== 'void') {
+            call.push('return ');
+        }
+        call.push(`nativeClassInstance->${methodConfig.methodName}(${MethodBindingHelpers.getArgUses(methodConfig, GeneratedType.cpp)});`);
+        result.push(call.join(''));
+
         result.push(`}`);
         return result.join('\n');
     }

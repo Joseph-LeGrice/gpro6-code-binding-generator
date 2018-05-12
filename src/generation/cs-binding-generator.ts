@@ -36,10 +36,31 @@ export class CsBindingGenerator extends BatchFileGenerator
     private instanceMethod(method: MethodBinding): string {
         const result: Array<string> = new Array<string>();
         result.push(`\t[MethodImpl(MethodImplOptions.InternalCall)]`);
-        result.push(`\tprivate extern static ${MethodBindingHelpers.returnType(method, GeneratedType.cs)} ${method.methodName}(int instanceid, ${MethodBindingHelpers.getArgDefinitions(method, GeneratedType.cs)});`);
+        
+        const args = MethodBindingHelpers.getArgDefinitions(method, GeneratedType.cs)
+        if (args.length > 0) {
+            result.push(`\tprivate extern static ${MethodBindingHelpers.returnType(method, GeneratedType.cs)} ${method.methodName}(int instanceid, ${args});`);
+        } else {
+            result.push(`\tprivate extern static ${MethodBindingHelpers.returnType(method, GeneratedType.cs)} ${method.methodName}(int instanceid);`);
+        }
+
         result.push(`\tpublic ${MethodBindingHelpers.returnType(method, GeneratedType.cs)} ${method.methodName}(${MethodBindingHelpers.getArgDefinitions(method, GeneratedType.cs)})`);
         result.push(`\t{`);
-        result.push(`\t\t${method.methodName}(InstanceID, ${MethodBindingHelpers.getArgUses(method, GeneratedType.cs)});`);
+
+        const argUses = MethodBindingHelpers.getArgUses(method, GeneratedType.cs);
+        const call = new Array<string>();
+        call.push('\t\t');
+        if (method.returnTypeInfo !== 'void') {
+            call.push('return ');
+        }
+
+        if (argUses.length > 0) {
+            call.push(`${method.methodName}(InstanceID, ${argUses});`);
+        } else {
+            call.push(`${method.methodName}(InstanceID);`);
+        }
+        result.push(call.join(''));
+        
         result.push(`\t}`);
         return result.join('\n');
     }
