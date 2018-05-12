@@ -1,4 +1,4 @@
-import { GeneratedType, ValidArguments } from "./argument-binding";
+import { GeneratedType, ValidArguments, MarshallInfo } from "./argument-binding";
 
 export interface BindingConfiguration {
     namespace: string;
@@ -22,6 +22,11 @@ export interface MethodBinding {
 }
 
 export const MethodBindingHelpers = {
+    getMarshall: function(info: string) : MarshallInfo | undefined {
+        const argInfo = ValidArguments[info];
+        return argInfo.marshall;
+    },
+    
     getArgument: function(info: string, type: GeneratedType) : string {
         const argInfo = ValidArguments[info];
         switch(type) {
@@ -39,7 +44,11 @@ export const MethodBindingHelpers = {
     getArgUses: function(method: MethodBinding, type: GeneratedType): string {
         let result: string[] = [];
         for (let i=0; i < method.argInfo.length; i++) {
-            result.push(`arg${i}`);
+            if (this.getMarshall(method.argInfo[i])) {
+                result.push(`arg${i}_marshalled`);
+            } else {
+                result.push(`arg${i}`);
+            }
         }
         return result.join(', ');
     },

@@ -74,6 +74,15 @@ export class CppSourceGenerator extends BatchFileGenerator
         const result: Array<string> = new Array<string>();
         result.push(`${MethodBindingHelpers.returnType(methodConfig, GeneratedType.cpp)} ${this.config.namespace}::${file.name}API::${methodConfig.methodName}(int managedInstanceId, ${MethodBindingHelpers.getArgDefinitions(methodConfig, GeneratedType.cpp)})`)
         result.push(`{`);
+
+        for (let i=0; i<methodConfig.argInfo.length; i++) {
+            const arg = methodConfig.argInfo[i];
+            const marshallInfo = MethodBindingHelpers.getMarshall(arg);
+            if (marshallInfo) {
+                result.push(`\t${marshallInfo.toType} arg${i}_marshalled = ${marshallInfo.withMethod}(arg${i});`);
+            }
+        }
+
         result.push(`\tTypedObjectManager* tom = GlobalStaticReferences::Instance()->GetTypedObjectManager();`);
         result.push(`\t${file.name}* nativeClassInstance = tom->GetInstance<${file.name}>(managedInstanceId);`);
         result.push(`\tnativeClassInstance->${methodConfig.methodName}(${MethodBindingHelpers.getArgUses(methodConfig, GeneratedType.cpp)});`);
