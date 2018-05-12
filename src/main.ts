@@ -4,10 +4,10 @@ import { ArgumentParser } from 'argparse'
 import { FileBinding } from './config/file-binding';
 import { GeneratedType } from './config/argument-binding';
 import { BindingCongfiguration } from './config/binding-configuration';
-import { CppHeaderGenerator } from './generation/cpp/cpp-header-file-generator';
-import { CppSourceGenerator } from './generation/cpp/cpp-source-file-generator';
-import { CppBindingHeaderGenerator, CppBindingSourceGenerator } from './generation/cpp/cpp-binding-registration-generator';
-import { CsBindingGenerator } from './generation/cpp/cs-binding-generator';
+import { CppHeaderGenerator } from './generation/cpp-header-file-generator';
+import { CppSourceGenerator } from './generation/cpp-source-file-generator';
+import { CppBindingHeaderGenerator, CppBindingSourceGenerator } from './generation/cpp-binding-registration-generator';
+import { CsBindingGenerator } from './generation/cs-binding-generator';
 
 var parser = new ArgumentParser({ addHelp: true });
 parser.addArgument(['CONFIG_FILE'], { help: "Configuration File for Binding Generation" });

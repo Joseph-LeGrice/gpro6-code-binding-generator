@@ -1,13 +1,12 @@
-import { FileBinding } from "../../config/file-binding";
-import { GeneratedType } from "../../config/argument-binding";
-import { MethodBinding } from "../../config/method-binding";
-import { BatchFileGenerator } from "./code-generator";
+import { FileBinding } from "../config/file-binding";
+import { GeneratedType } from "../config/argument-binding";
+import { MethodBinding } from "../config/method-binding";
+import { BatchFileGenerator, GeneratorUtil } from "./code-generator";
 import * as path from "path";
 
 export class CppHeaderGenerator extends BatchFileGenerator
 {
-    protected generateFile(file: FileBinding): string
-    {
+    protected generateFileSkeleton(file: FileBinding): string {
         const result: Array<string> = new Array<string>();
         result.push(`#pragma once\n`);
         
@@ -20,41 +19,35 @@ export class CppHeaderGenerator extends BatchFileGenerator
         result.push(`{`);
         result.push(`\tnamespace ${file.name}API`);
         result.push(`\t{`);
-        result.push(`\t\textern void RegisterCalls();`);
-        result.push(`${this.generateMethodDefinitions(file)}`);
+        result.push(GeneratorUtil.delimiter);
+        result.push(GeneratorUtil.delimiter);        
         result.push(`\t};`);
         result.push(`};`);
         return result.join('\n');
+    }
+    
+    protected appendMethodInfo(file: FileBinding, fileText: string): string {
+        let result = GeneratorUtil.clear(fileText);
+        result = GeneratorUtil.insert(`\t\textern void RegisterCalls();`, result);
+        for (const m of file.methods) {
+            if (m.type === 'instance') {
+                result = GeneratorUtil.insert(this.instanceMethodDefinition(m), result);
+            } else if (m.type === 'static') {
+                result = GeneratorUtil.insert(this.staticMethodDefinition(m), result);
+            }
+        }
+        return result;
     }
 
     protected getFileName(file: FileBinding) {
         return path.resolve(this.config.outputCppDirectory, file.subdirectory, `${file.name}API.h`);
     }
 
-    private generateMethodDefinitions(file: FileBinding): string
-    {
-        const result: Array<string> = new Array<string>();
-        for (const m of file.methods)
-        {
-            if (m.type === 'instance')
-            {
-                result.push(this.instanceMethodDefinition(m));
-            }
-            else if (m.type === 'static')
-            {
-                result.push(this.staticMethodDefinition(m));
-            }
-        }        
-        return result.join('\n');
-    }
-
-    private instanceMethodDefinition(method: MethodBinding): string
-    {
+    private instanceMethodDefinition(method: MethodBinding): string {
         return `\t\textern ${method.returnType(GeneratedType.cpp)} ${method.name}(int managedInstanceId, ${method.getArgDefinitions(GeneratedType.cpp)});`
     }
 
-    private staticMethodDefinition(method: MethodBinding): string
-    {
+    private staticMethodDefinition(method: MethodBinding): string {
         return `\t\textern ${method.returnType(GeneratedType.cpp)} ${method.name}(${method.getArgDefinitions(GeneratedType.cpp)});`
     }
 }
