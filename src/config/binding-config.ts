@@ -44,7 +44,7 @@ export const MethodBindingHelpers = {
     getArgUses: function(method: MethodBinding, type: GeneratedType): string {
         let result: string[] = [];
         for (let i=0; i < method.argInfo.length; i++) {
-            if (this.getMarshall(method.argInfo[i])) {
+            if (type === GeneratedType.cpp && this.getMarshall(method.argInfo[i])) {
                 result.push(`arg${i}_marshalled`);
             } else {
                 result.push(`arg${i}`);
