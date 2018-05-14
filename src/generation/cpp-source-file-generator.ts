@@ -31,8 +31,7 @@ export class CppSourceGenerator extends BatchFileGenerator
         return path.resolve(this.config.outputCppDirectory, file.subdirectory, `${file.name}API.cpp`);
     }
 
-    private registerCalls(file: FileBinding): string
-    {        
+    private registerCalls(file: FileBinding): string {        
         const result: Array<string> = new Array<string>();
         result.push(`void ${this.config.namespace}::${file.name}API::RegisterCalls()`);
         result.push(`{`);
@@ -49,15 +48,19 @@ export class CppSourceGenerator extends BatchFileGenerator
 
     private addInstanceMonoCall(file: FileBinding, method: MethodBinding): string {
         let args: string[] = [];
-        for (let i=0; i < method.argInfo.length; i++) {
-            const arg = method.argInfo[i];
+        for (let i=0; i < method.args.length; i++) {
+            const arg = method.args[i];
             args.push(`${MethodBindingHelpers.getArgument(arg, GeneratedType.cs)}`);
         }
-        return `\tmono_add_internal_call("${file.name}::${method.methodName}(int,${args.join(',')})", ${this.config.namespace}::${file.name}API::${method.methodName});`
+        if (args.length > 0) {
+            return `\tmono_add_internal_call("${file.name}::${method.name}(int,${args.join(',')})", ${this.config.namespace}::${file.name}API::${method.name});`
+        } else {
+            return `\tmono_add_internal_call("${file.name}::${method.name}(int)", ${this.config.namespace}::${file.name}API::${method.name});`            
+        }
     }
 
     private addStaticMonoCall(file: FileBinding, method: MethodBinding): string {
-        return `\tmono_add_internal_call("${file.name}::${method.methodName}", ${this.config.namespace}::${file.name}API::${method.methodName});`
+        return `\tmono_add_internal_call("${file.name}::${method.name}", ${this.config.namespace}::${file.name}API::${method.name});`
     }
     
     private generateMethodImplementations(config: FileBinding): string {
@@ -72,36 +75,44 @@ export class CppSourceGenerator extends BatchFileGenerator
 
     private instanceMethod(file: FileBinding, methodConfig: MethodBinding): string {
         const result: Array<string> = new Array<string>();
+        result.push(this.methodSignature(file, methodConfig));
+        result.push(`{`);
+        result.push(...this.getMarshalledArgs(methodConfig));
+        result.push(`\tTypedObjectManager* tom = GlobalStaticReferences::Instance()->GetTypedObjectManager();`);
+        result.push(`\t${file.name}* nativeClassInstance = tom->GetInstance<${file.name}>(managedInstanceId);`);
+        result.push(...this.getCall(methodConfig));
+        result.push(`}`);
+        return result.join('\n');
+    }
 
+    private methodSignature(file: FileBinding, methodConfig: MethodBinding) {
         let args = MethodBindingHelpers.getArgDefinitions(methodConfig, GeneratedType.cpp);
         if (args.length > 0) {
-            result.push(`${MethodBindingHelpers.returnType(methodConfig, GeneratedType.cpp)} ${this.config.namespace}::${file.name}API::${methodConfig.methodName}(int managedInstanceId, ${MethodBindingHelpers.getArgDefinitions(methodConfig, GeneratedType.cpp)})`)
+            return `${MethodBindingHelpers.returnType(methodConfig, GeneratedType.cpp)} ${this.config.namespace}::${file.name}API::${methodConfig.name}(int managedInstanceId, ${MethodBindingHelpers.getArgDefinitions(methodConfig, GeneratedType.cpp)})`;
         } else {
-            result.push(`${MethodBindingHelpers.returnType(methodConfig, GeneratedType.cpp)} ${this.config.namespace}::${file.name}API::${methodConfig.methodName}(int managedInstanceId)`)
+            return `${MethodBindingHelpers.returnType(methodConfig, GeneratedType.cpp)} ${this.config.namespace}::${file.name}API::${methodConfig.name}(int managedInstanceId)`;
         }
+    }
 
-        result.push(`{`);
-
-        for (let i=0; i<methodConfig.argInfo.length; i++) {
-            const arg = methodConfig.argInfo[i];
+    private getMarshalledArgs(methodConfig: MethodBinding): Array<string> {
+        const result = new Array<string>();
+        for (let i=0; i<methodConfig.args.length; i++) {
+            const arg = methodConfig.args[i];
             const marshallInfo = MethodBindingHelpers.getMarshall(arg);
             if (marshallInfo) {
                 result.push(`\t${marshallInfo.toType} arg${i}_marshalled = ${marshallInfo.withMethod}(arg${i});`);
             }
         }
+        return result;
+    }
 
-        result.push(`\tTypedObjectManager* tom = GlobalStaticReferences::Instance()->GetTypedObjectManager();`);
-        result.push(`\t${file.name}* nativeClassInstance = tom->GetInstance<${file.name}>(managedInstanceId);`);
-        
-        const call = new Array<string>();
-        call.push('\t');
-        if (methodConfig.returnTypeInfo !== 'void') {
-            call.push('return ');
+    private getCall(methodConfig: MethodBinding): Array<string> {
+        const result = new Array<string>();
+        result.push('\t');
+        if (methodConfig.returnType !== 'void') {
+            result.push('return ');
         }
-        call.push(`nativeClassInstance->${methodConfig.methodName}(${MethodBindingHelpers.getArgUses(methodConfig, GeneratedType.cpp)});`);
-        result.push(call.join(''));
-
-        result.push(`}`);
-        return result.join('\n');
+        result.push(`nativeClassInstance->${methodConfig.name}(${MethodBindingHelpers.getArgUses(methodConfig, GeneratedType.cpp)});`);
+        return result;
     }
 }

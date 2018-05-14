@@ -54,7 +54,8 @@
                                     "type": "string",
                                     "enum": [
                                         "instance",
-                                        "static"
+                                        "static",
+                                        "ivar"
                                     ]
                                 },
                                 "methodName": {

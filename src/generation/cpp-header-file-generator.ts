@@ -45,13 +45,13 @@ export class CppHeaderGenerator extends BatchFileGenerator
     private instanceMethodDefinition(method: MethodBinding): string {
         let args = MethodBindingHelpers.getArgDefinitions(method, GeneratedType.cpp);
         if (args.length > 0) {
-            return `\t\textern ${MethodBindingHelpers.returnType(method, GeneratedType.cpp)} ${method.methodName}(int managedInstanceId, ${args});`
+            return `\t\textern ${MethodBindingHelpers.returnType(method, GeneratedType.cpp)} ${method.name}(int managedInstanceId, ${args});`
         } else {
-            return `\t\textern ${MethodBindingHelpers.returnType(method, GeneratedType.cpp)} ${method.methodName}(int managedInstanceId);`            
+            return `\t\textern ${MethodBindingHelpers.returnType(method, GeneratedType.cpp)} ${method.name}(int managedInstanceId);`            
         }
     }
 
     private staticMethodDefinition(method: MethodBinding): string {
-        return `\t\textern ${MethodBindingHelpers.returnType(method, GeneratedType.cpp)} ${method.methodName}(${MethodBindingHelpers.getArgDefinitions(method, GeneratedType.cpp)});`
+        return `\t\textern ${MethodBindingHelpers.returnType(method, GeneratedType.cpp)} ${method.name}(${MethodBindingHelpers.getArgDefinitions(method, GeneratedType.cpp)});`
     }
 }

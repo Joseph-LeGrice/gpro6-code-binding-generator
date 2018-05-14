@@ -16,9 +16,9 @@ export interface FileBinding {
 
 export interface MethodBinding {
     methodType: 'instance' | 'static';
-    methodName: string;
-    returnTypeInfo: string;
-    argInfo: Array<string>;
+    name: string;
+    returnType: string;
+    args: Array<string>;
 }
 
 export const MethodBindingHelpers = {
@@ -38,13 +38,13 @@ export const MethodBindingHelpers = {
     },
 
     returnType: function(method: MethodBinding, type: GeneratedType): string {
-        return this.getArgument(method.returnTypeInfo, type);
+        return this.getArgument(method.returnType, type);
     },
 
     getArgUses: function(method: MethodBinding, type: GeneratedType): string {
         let result: string[] = [];
-        for (let i=0; i < method.argInfo.length; i++) {
-            if (type === GeneratedType.cpp && this.getMarshall(method.argInfo[i])) {
+        for (let i=0; i < method.args.length; i++) {
+            if (type === GeneratedType.cpp && this.getMarshall(method.args[i])) {
                 result.push(`arg${i}_marshalled`);
             } else {
                 result.push(`arg${i}`);
@@ -55,8 +55,8 @@ export const MethodBindingHelpers = {
     
     getArgDefinitions: function(method: MethodBinding, type: GeneratedType): string {
         let result: string[] = [];
-        for (let i=0; i < method.argInfo.length; i++) {
-            const arg = method.argInfo[i];
+        for (let i=0; i < method.args.length; i++) {
+            const arg = method.args[i];
             result.push(`${this.getArgument(arg, type)} arg${i}`);
         }
         return result.join(', ');

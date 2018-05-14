@@ -36,39 +36,43 @@ export class CsBindingGenerator extends BatchFileGenerator
     private instanceMethod(method: MethodBinding): string {
         const result: Array<string> = new Array<string>();
         result.push(`\t[MethodImpl(MethodImplOptions.InternalCall)]`);
-        
-        const args = MethodBindingHelpers.getArgDefinitions(method, GeneratedType.cs)
-        if (args.length > 0) {
-            result.push(`\tprivate extern static ${MethodBindingHelpers.returnType(method, GeneratedType.cs)} ${method.methodName}(int instanceid, ${args});`);
-        } else {
-            result.push(`\tprivate extern static ${MethodBindingHelpers.returnType(method, GeneratedType.cs)} ${method.methodName}(int instanceid);`);
-        }
-
-        result.push(`\tpublic ${MethodBindingHelpers.returnType(method, GeneratedType.cs)} ${method.methodName}(${MethodBindingHelpers.getArgDefinitions(method, GeneratedType.cs)})`);
+        result.push(this.externMethodSignature(method));
+        result.push(`\tpublic ${MethodBindingHelpers.returnType(method, GeneratedType.cs)} ${method.name}(${MethodBindingHelpers.getArgDefinitions(method, GeneratedType.cs)})`);
         result.push(`\t{`);
-
-        const argUses = MethodBindingHelpers.getArgUses(method, GeneratedType.cs);
-        const call = new Array<string>();
-        call.push('\t\t');
-        if (method.returnTypeInfo !== 'void') {
-            call.push('return ');
-        }
-
-        if (argUses.length > 0) {
-            call.push(`${method.methodName}(InstanceID, ${argUses});`);
-        } else {
-            call.push(`${method.methodName}(InstanceID);`);
-        }
-        result.push(call.join(''));
-        
+        result.push(...this.externMethodCall(method));
         result.push(`\t}`);
         return result.join('\n');
     }
     
+    private externMethodSignature(method: MethodBinding): string {
+        const args = MethodBindingHelpers.getArgDefinitions(method, GeneratedType.cs)
+        if (args.length > 0) {
+            return `\tprivate extern static ${MethodBindingHelpers.returnType(method, GeneratedType.cs)} ${method.name}(int instanceid, ${args});`;
+        } else {
+            return `\tprivate extern static ${MethodBindingHelpers.returnType(method, GeneratedType.cs)} ${method.name}(int instanceid);`;
+        }
+    }
+
+    private externMethodCall(method: MethodBinding) {
+        const argUses = MethodBindingHelpers.getArgUses(method, GeneratedType.cs);
+        const result = new Array<string>();
+        result.push('\t\t');
+        if (method.returnType !== 'void') {
+            result.push('return ');
+        }
+
+        if (argUses.length > 0) {
+            result.push(`${method.name}(InstanceID, ${argUses});`);
+        } else {
+            result.push(`${method.name}(InstanceID);`);
+        }
+        return result;
+    }
+
     private staticMethod(method: MethodBinding): string {
         const result: Array<string> = new Array<string>()
         result.push(`\t[MethodImplAttribute(MethodImplOptions.InternalCall)]`);
-        result.push(`\tpublic extern static ${MethodBindingHelpers.returnType(method, GeneratedType.cs)} ${method.methodName}(${MethodBindingHelpers.getArgDefinitions(method, GeneratedType.cs)});`);
+        result.push(`\tpublic extern static ${MethodBindingHelpers.returnType(method, GeneratedType.cs)} ${method.name}(${MethodBindingHelpers.getArgDefinitions(method, GeneratedType.cs)});`);
         return result.join('\n');
     }
 }
