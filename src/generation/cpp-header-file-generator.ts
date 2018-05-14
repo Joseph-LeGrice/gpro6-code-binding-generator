@@ -69,10 +69,10 @@ export class CppHeaderGenerator extends BatchFileGenerator
         return result.join('\n');
     }
     private propertyGetterMethodName(prop: PropertyBinding) {
-        return `Get_${prop.name};`;
+        return `Get_${prop.name}`;
     }
     
     private propertySetterMethodName(prop: PropertyBinding) {
-        return `Set_${prop.name};`;
+        return `Set_${prop.name}`;
     }
 }

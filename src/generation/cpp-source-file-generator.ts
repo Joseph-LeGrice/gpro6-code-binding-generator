@@ -76,10 +76,10 @@ export class CppSourceGenerator extends BatchFileGenerator
     private addPropertyMonoCall(file: FileBinding, prop: PropertyBinding): string {
         const result = new Array<string>();
         if (prop.getter) {
-            result.push(`\tmono_add_internal_call("${file.name}::${this.propertyGetterMethodName(prop)}", ${this.config.namespace}::${file.name}API::${this.propertyGetterMethodName(prop)}`);
+            result.push(`\tmono_add_internal_call("${file.name}::${this.propertyGetterMethodName(prop)}", ${this.config.namespace}::${file.name}API::${this.propertyGetterMethodName(prop)});`);
         }
         if (prop.setter) {
-            result.push(`\tmono_add_internal_call("${file.name}::${this.propertySetterMethodName(prop)}", ${this.config.namespace}::${file.name}API::${this.propertySetterMethodName(prop)}`);
+            result.push(`\tmono_add_internal_call("${file.name}::${this.propertySetterMethodName(prop)}", ${this.config.namespace}::${file.name}API::${this.propertySetterMethodName(prop)});`);
         }
         return result.join('\n');
     }
@@ -170,17 +170,17 @@ export class CppSourceGenerator extends BatchFileGenerator
     private property(file: FileBinding, prop: PropertyBinding): string {
         const result = new Array<string>();
         if (prop.getter) {
-            result.push(this.propertyGetterImpl(file, prop));
+            result.push(`${this.propertyGetterImpl(file, prop)}\n`);
         }
         if (prop.setter) {
-            result.push(this.propertySetterImpl(file, prop));
+            result.push(`${this.propertySetterImpl(file, prop)}\n`);
         }
         return result.join('\n');
     }
 
     private propertyGetterImpl(file: FileBinding, prop: PropertyBinding): string {
         const result = new Array<string>();
-        result.push(`${MethodBindingHelpers.returnType(prop, GeneratedType.cpp)} ${this.propertyGetterMethodName(prop)}(int instanceId)`);
+        result.push(`${MethodBindingHelpers.returnType(prop, GeneratedType.cpp)} GPro::${file.name}API::${this.propertyGetterMethodName(prop)}(int managedInstanceId)`);
         result.push('{');
         result.push(this.getNativeInstance(file));
         result.push(`\treturn nativeClassInstance->${prop.nativeName};`);
@@ -190,7 +190,7 @@ export class CppSourceGenerator extends BatchFileGenerator
 
     private propertySetterImpl(file: FileBinding, prop: PropertyBinding): string {
         const result = new Array<string>();
-        result.push(`void ${this.propertySetterMethodName(prop)}(int instanceId, ${MethodBindingHelpers.returnType(prop, GeneratedType.cpp)} value)`);
+        result.push(`void GPro::${file.name}API::${this.propertySetterMethodName(prop)}(int managedInstanceId, ${MethodBindingHelpers.returnType(prop, GeneratedType.cpp)} value)`);
         result.push('{');
         result.push(this.getNativeInstance(file));
         result.push(`\tnativeClassInstance->${prop.nativeName} = value;`);
@@ -199,10 +199,10 @@ export class CppSourceGenerator extends BatchFileGenerator
     }
     
     private propertyGetterMethodName(prop: PropertyBinding) {
-        return `Get_${prop.name};`;
+        return `Get_${prop.name}`;
     }
     
     private propertySetterMethodName(prop: PropertyBinding) {
-        return `Set_${prop.name};`;
+        return `Set_${prop.name}`;
     }
 }

@@ -41,12 +41,12 @@ export class CsBindingGenerator extends BatchFileGenerator
         
         if (prop.getter) {
             result.push(`\t[MethodImpl(MethodImplOptions.InternalCall)]`);
-            result.push(`\tprivate ${MethodBindingHelpers.returnType(prop, GeneratedType.cs)} ${this.propertyGetter(prop, "int instanceId")}`);
+            result.push(`\tprivate extern ${MethodBindingHelpers.returnType(prop, GeneratedType.cs)} ${this.propertyGetter(prop, "int instanceId")}\n`);
         }
         
         if (prop.setter) {
             result.push(`\t[MethodImpl(MethodImplOptions.InternalCall)]`);
-            result.push(`\tprivate void ${this.propertySetter(prop, `int instanceId, ${MethodBindingHelpers.returnType(prop, GeneratedType.cs)} val`)}`);
+            result.push(`\tprivate extern void ${this.propertySetter(prop, `int instanceId, ${MethodBindingHelpers.returnType(prop, GeneratedType.cs)} val`)}\n`);
         }
 
         result.push(`\tpublic ${MethodBindingHelpers.returnType(prop, GeneratedType.cs)} ${prop.name}`);
@@ -83,9 +83,9 @@ export class CsBindingGenerator extends BatchFileGenerator
     private externMethodSignature(method: MethodBinding): string {
         const args = MethodBindingHelpers.getArgDefinitions(method, GeneratedType.cs)
         if (args.length > 0) {
-            return `\tprivate extern static ${MethodBindingHelpers.returnType(method, GeneratedType.cs)} ${method.name}(int instanceid, ${args});`;
+            return `\tprivate extern static ${MethodBindingHelpers.returnType(method, GeneratedType.cs)} ${method.name}(int instanceid, ${args});\n`;
         } else {
-            return `\tprivate extern static ${MethodBindingHelpers.returnType(method, GeneratedType.cs)} ${method.name}(int instanceid);`;
+            return `\tprivate extern static ${MethodBindingHelpers.returnType(method, GeneratedType.cs)} ${method.name}(int instanceid);\n`;
         }
     }
 
