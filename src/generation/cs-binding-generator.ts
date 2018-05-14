@@ -1,4 +1,4 @@
-import { FileBinding, MethodBinding, MethodBindingHelpers } from "../config/binding-config";
+import { FileBinding, MethodBinding, MethodBindingHelpers, PropertyBinding } from "../config/binding-config";
 import { GeneratedType } from "../config/argument-binding";
 import { BatchFileGenerator, GeneratorUtil } from "./code-generator";
 import * as path from "path";
@@ -19,6 +19,9 @@ export class CsBindingGenerator extends BatchFileGenerator
     
     protected appendMethodInfo(file: FileBinding, fileText: string): string {
         let result = GeneratorUtil.clear(fileText);
+        for (const p of file.properties) {
+            result = GeneratorUtil.insert(`${this.property(p)}\n`, result);
+        }
         for (const m of file.methods) {
             if (m.methodType === 'instance') {
                 result = GeneratorUtil.insert(`${this.instanceMethod(m)}\n`, result);
@@ -33,13 +36,46 @@ export class CsBindingGenerator extends BatchFileGenerator
         return path.resolve(this.config.outputCsDirectory, file.subdirectory, `${file.name}.cs`);
     }
 
+    private property(prop: PropertyBinding): string {
+        const result = new Array<string>();
+        
+        if (prop.getter) {
+            result.push(`\t[MethodImpl(MethodImplOptions.InternalCall)]`);
+            result.push(`\tprivate ${MethodBindingHelpers.returnType(prop, GeneratedType.cs)} ${this.propertyGetter(prop, "int instanceId")}`);
+        }
+        
+        if (prop.setter) {
+            result.push(`\t[MethodImpl(MethodImplOptions.InternalCall)]`);
+            result.push(`\tprivate void ${this.propertySetter(prop, `int instanceId, ${MethodBindingHelpers.returnType(prop, GeneratedType.cs)} val`)}`);
+        }
+
+        result.push(`\tpublic ${MethodBindingHelpers.returnType(prop, GeneratedType.cs)} ${prop.name}`);
+        result.push('\t{');
+        if (prop.getter) {
+            result.push(`\t\tget { return ${this.propertyGetter(prop, "InstanceID")} }`);
+        }
+        if (prop.setter) {
+            result.push(`\t\tset { ${this.propertySetter(prop, "InstanceID, value")} }`);
+        }
+        result.push('\t}');
+        return result.join('\n');
+    }
+
+    private propertyGetter(prop: PropertyBinding, withinParenthesis: string) {
+        return `Get_${prop.name}(${withinParenthesis});`;
+    }
+    
+    private propertySetter(prop: PropertyBinding, withinParenthesis: string) {
+        return `Set_${prop.name}(${withinParenthesis});`;
+    }
+
     private instanceMethod(method: MethodBinding): string {
         const result: Array<string> = new Array<string>();
         result.push(`\t[MethodImpl(MethodImplOptions.InternalCall)]`);
         result.push(this.externMethodSignature(method));
         result.push(`\tpublic ${MethodBindingHelpers.returnType(method, GeneratedType.cs)} ${method.name}(${MethodBindingHelpers.getArgDefinitions(method, GeneratedType.cs)})`);
         result.push(`\t{`);
-        result.push(...this.externMethodCall(method));
+        result.push(this.externMethodCall(method));
         result.push(`\t}`);
         return result.join('\n');
     }
@@ -53,7 +89,7 @@ export class CsBindingGenerator extends BatchFileGenerator
         }
     }
 
-    private externMethodCall(method: MethodBinding) {
+    private externMethodCall(method: MethodBinding): string {
         const argUses = MethodBindingHelpers.getArgUses(method, GeneratedType.cs);
         const result = new Array<string>();
         result.push('\t\t');
@@ -66,7 +102,7 @@ export class CsBindingGenerator extends BatchFileGenerator
         } else {
             result.push(`${method.name}(InstanceID);`);
         }
-        return result;
+        return result.join('');
     }
 
     private staticMethod(method: MethodBinding): string {

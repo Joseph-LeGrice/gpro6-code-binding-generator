@@ -12,6 +12,7 @@ export interface FileBinding {
     includePath: string;
     subdirectory: string;
     methods: Array<MethodBinding>;
+    properties: Array<PropertyBinding>;    
 }
 
 export interface MethodBinding {
@@ -19,6 +20,14 @@ export interface MethodBinding {
     name: string;
     returnType: string;
     args: Array<string>;
+}
+
+export interface PropertyBinding {
+    getter: boolean;
+    setter: boolean;
+    name: string;
+    nativeName: string; // What if we want native getter / setter method calls, not ivars?
+    returnType: string;
 }
 
 export const MethodBindingHelpers = {
@@ -37,8 +46,8 @@ export const MethodBindingHelpers = {
         }
     },
 
-    returnType: function(method: MethodBinding, type: GeneratedType): string {
-        return this.getArgument(method.returnType, type);
+    returnType: function(binding: MethodBinding | PropertyBinding, type: GeneratedType): string {
+        return this.getArgument(binding.returnType, type);
     },
 
     getArgUses: function(method: MethodBinding, type: GeneratedType): string {

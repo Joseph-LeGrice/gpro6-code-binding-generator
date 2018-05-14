@@ -1,5 +1,5 @@
 import { GeneratedType } from "../config/argument-binding";
-import { FileBinding, MethodBinding, MethodBindingHelpers } from "../config/binding-config";
+import { FileBinding, MethodBinding, MethodBindingHelpers, PropertyBinding } from "../config/binding-config";
 import { BatchFileGenerator, GeneratorUtil } from "./code-generator";
 import * as path from "path";
 
@@ -35,6 +35,9 @@ export class CppHeaderGenerator extends BatchFileGenerator
                 result = GeneratorUtil.insert(this.staticMethodDefinition(m), result);
             }
         }
+        for (const p of file.properties) {
+            result = GeneratorUtil.insert(this.property(p), result);
+        }
         return result;
     }
 
@@ -53,5 +56,23 @@ export class CppHeaderGenerator extends BatchFileGenerator
 
     private staticMethodDefinition(method: MethodBinding): string {
         return `\t\textern ${MethodBindingHelpers.returnType(method, GeneratedType.cpp)} ${method.name}(${MethodBindingHelpers.getArgDefinitions(method, GeneratedType.cpp)});`
+    }
+    
+    private property(prop: PropertyBinding): string {
+        const result = new Array<string>();
+        if (prop.getter) {
+            result.push(`\t\t${MethodBindingHelpers.returnType(prop, GeneratedType.cpp)} ${this.propertyGetterMethodName(prop)}(int managedInstanceId);`);
+        }
+        if (prop.setter) {
+            result.push(`\t\tvoid ${this.propertySetterMethodName(prop)}(int managedInstanceId, ${MethodBindingHelpers.returnType(prop, GeneratedType.cpp)} val);`);
+        }
+        return result.join('\n');
+    }
+    private propertyGetterMethodName(prop: PropertyBinding) {
+        return `Get_${prop.name};`;
+    }
+    
+    private propertySetterMethodName(prop: PropertyBinding) {
+        return `Set_${prop.name};`;
     }
 }
