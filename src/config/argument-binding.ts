@@ -51,7 +51,7 @@ export const ValidArguments: { [key: string]: ArgumentInfo } = {
     },
     'array-string': {
         cpp: 'MonoArray*',
-        cs: 'string',
+        cs: 'System.Collections.Generic.List<string>',
         marshall: {
             toType: 'std::vector<std::wstring>',
             toNativeMethod: 'MonoMarshall::GetStringVector',
