@@ -54,5 +54,45 @@ export const ValidArguments: { [key: string]: ArgumentInfo } = {
             toType: 'std::vector<std::wstring>',
             withMethod: 'MonoMarshall::GetStringVector'
         }
+    },
+    'vector4': {
+        cpp: 'MonoObject*',
+        cs: 'Vector4',
+        marshall: {
+            toType: 'Vector4',
+            withMethod: 'MonoMarshall::GetVector4'
+        }
+    },
+    'vector3': {
+        cpp: 'MonoObject*',
+        cs: 'Vector3',
+        marshall: {
+            toType: 'Vector3',
+            withMethod: 'MonoMarshall::GetVector3'
+        }
+    },
+    'vector2': {
+        cpp: 'MonoObject*',
+        cs: 'Vector2',
+        marshall: {
+            toType: 'Vector2',
+            withMethod: 'MonoMarshall::GetVector2'
+        }
+    },
+    'matrix4x4': {
+        cpp: 'MonoObject*',
+        cs: 'Matrix4x4',
+        marshall: {
+            toType: 'Matrix4x4',
+            withMethod: 'MonoMarshall::GetMatrix4x4'
+        }
+    },
+    'matrix3x3': {
+        cpp: 'MonoObject*',
+        cs: 'Matrix3x3',
+        marshall: {
+            toType: 'Matrix3x3',
+            withMethod: 'MonoMarshall::GetMatrix3x3'
+        }
     }
 }
