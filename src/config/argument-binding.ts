@@ -5,7 +5,8 @@ export enum GeneratedType {
 
 export interface MarshallInfo {
     toType: string;
-    withMethod: string;
+    toNativeMethod: string;
+    toManagedMethod: string;
 }
 
 export interface ArgumentInfo {
@@ -44,7 +45,8 @@ export const ValidArguments: { [key: string]: ArgumentInfo } = {
         cs: 'string',
         marshall: {
             toType: 'std::wstring',
-            withMethod: 'MonoMarshall::GetUTF16String'
+            toNativeMethod: 'MonoMarshall::GetUTF16String',
+            toManagedMethod: 'MonoMarshall::GetManagedUTF16String'
         }
     },
     'array-string': {
@@ -52,7 +54,8 @@ export const ValidArguments: { [key: string]: ArgumentInfo } = {
         cs: 'string',
         marshall: {
             toType: 'std::vector<std::wstring>',
-            withMethod: 'MonoMarshall::GetStringVector'
+            toNativeMethod: 'MonoMarshall::GetStringVector',
+            toManagedMethod: 'MonoMarshall::GetManagedStringVector'
         }
     },
     'vector4': {
@@ -60,7 +63,8 @@ export const ValidArguments: { [key: string]: ArgumentInfo } = {
         cs: 'Vector4',
         marshall: {
             toType: 'Vector4',
-            withMethod: 'MonoMarshall::GetVector4'
+            toNativeMethod: 'MonoMarshall::GetVector4',
+            toManagedMethod: 'MonoMarshall::GetManagedVector4'
         }
     },
     'vector3': {
@@ -68,7 +72,8 @@ export const ValidArguments: { [key: string]: ArgumentInfo } = {
         cs: 'Vector3',
         marshall: {
             toType: 'Vector3',
-            withMethod: 'MonoMarshall::GetVector3'
+            toNativeMethod: 'MonoMarshall::GetVector3',
+            toManagedMethod: 'MonoMarshall::GetManagedVector3'
         }
     },
     'vector2': {
@@ -76,7 +81,8 @@ export const ValidArguments: { [key: string]: ArgumentInfo } = {
         cs: 'Vector2',
         marshall: {
             toType: 'Vector2',
-            withMethod: 'MonoMarshall::GetVector2'
+            toNativeMethod: 'MonoMarshall::GetVector2',
+            toManagedMethod: 'MonoMarshall::GetManagedVector2'
         }
     },
     'matrix4x4': {
@@ -84,7 +90,8 @@ export const ValidArguments: { [key: string]: ArgumentInfo } = {
         cs: 'Matrix4x4',
         marshall: {
             toType: 'Matrix4x4',
-            withMethod: 'MonoMarshall::GetMatrix4x4'
+            toNativeMethod: 'MonoMarshall::GetMatrix4x4',
+            toManagedMethod: 'MonoMarshall::GetManagedMatrix4x4'
         }
     },
     'matrix3x3': {
@@ -92,7 +99,17 @@ export const ValidArguments: { [key: string]: ArgumentInfo } = {
         cs: 'Matrix3x3',
         marshall: {
             toType: 'Matrix3x3',
-            withMethod: 'MonoMarshall::GetMatrix3x3'
+            toNativeMethod: 'MonoMarshall::GetMatrix3x3',
+            toManagedMethod: 'MonoMarshall::GetManagedMatrix3x3'
+        }
+    },
+    'quaternion': {
+        cpp: 'MonoObject*',
+        cs: 'Quaternion',
+        marshall: {
+            toType: 'Quaternion',
+            toNativeMethod: 'MonoMarshall::GetQuaternion',
+            toManagedMethod: 'MonoMarshall::GetManagedQuaternion'
         }
     }
 }

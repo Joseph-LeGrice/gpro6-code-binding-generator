@@ -130,7 +130,7 @@ export class CppSourceGenerator extends BatchFileGenerator
             const arg = methodConfig.args[i];
             const marshallInfo = MethodBindingHelpers.getMarshall(arg);
             if (marshallInfo) {
-                result.push(`\t${marshallInfo.toType} arg${i}_marshalled = ${marshallInfo.withMethod}(arg${i});`);
+                result.push(`\t${marshallInfo.toType} arg${i}_marshalled = ${marshallInfo.toNativeMethod}(arg${i});`);
             }
         }
         if (result.length > 0) {
@@ -183,7 +183,12 @@ export class CppSourceGenerator extends BatchFileGenerator
         result.push(`${MethodBindingHelpers.returnType(prop, GeneratedType.cpp)} GPro::${file.name}API::${this.propertyGetterMethodName(prop)}(int managedInstanceId)`);
         result.push('{');
         result.push(this.getNativeInstance(file));
-        result.push(`\treturn nativeClassInstance->${prop.nativeName};`);
+        const marshallInfo = MethodBindingHelpers.getMarshall(prop.returnType);
+        if (marshallInfo) {
+            result.push(`\treturn ${marshallInfo.toManagedMethod}(nativeClassInstance->${prop.nativeName});`);
+        } else {
+            result.push(`\treturn nativeClassInstance->${prop.nativeName};`);            
+        }
         result.push('}');
         return result.join('\n');
     }
@@ -193,7 +198,12 @@ export class CppSourceGenerator extends BatchFileGenerator
         result.push(`void GPro::${file.name}API::${this.propertySetterMethodName(prop)}(int managedInstanceId, ${MethodBindingHelpers.returnType(prop, GeneratedType.cpp)} value)`);
         result.push('{');
         result.push(this.getNativeInstance(file));
-        result.push(`\tnativeClassInstance->${prop.nativeName} = value;`);
+        const marshallInfo = MethodBindingHelpers.getMarshall(prop.returnType);
+        if (marshallInfo) {
+            result.push(`\tnativeClassInstance->${prop.nativeName} = ${marshallInfo.toNativeMethod}(value);`);
+        } else {
+            result.push(`\tnativeClassInstance->${prop.nativeName} = value;`);            
+        }
         result.push('}');
         return result.join('\n');
     }
