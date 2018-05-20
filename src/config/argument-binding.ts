@@ -40,6 +40,10 @@ export const ValidArguments: { [key: string]: ArgumentInfo } = {
         cpp: 'char',
         cs: 'char'
     },
+    'bool': {
+        cpp: 'bool',
+        cs: 'bool'
+    },
     'string': {
         cpp: 'MonoString*',
         cs: 'string',
