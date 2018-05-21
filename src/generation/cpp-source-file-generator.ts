@@ -13,6 +13,7 @@ export class CppSourceGenerator extends BatchFileGenerator
         if (file.includePath) {
             result.push(`#include "${file.includePath}"\n`);
         }
+        result.push(`#include "Engine/Core/Scripting/NativeToManagedInstanceMap.h"`);
         result.push(`#include "Engine/Core/Scripting/MonoMarshallHelpers.h"`);
         result.push(`#include "Engine/Core/RTTI/TypedObjectManager.h"\n`);
         result.push(GeneratorUtil.delimiter);

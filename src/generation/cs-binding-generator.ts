@@ -19,6 +19,9 @@ export class CsBindingGenerator extends BatchFileGenerator
     
     protected appendMethodInfo(file: FileBinding, fileText: string): string {
         let result = GeneratorUtil.clear(fileText);
+        
+        result = GeneratorUtil.insert(`${this.getTypeMethod(file)}\n`, result);
+
         for (const p of file.properties) {
             result = GeneratorUtil.insert(`${this.property(p)}\n`, result);
         }
@@ -34,6 +37,15 @@ export class CsBindingGenerator extends BatchFileGenerator
 
     protected getFileName(file: FileBinding) {
         return path.resolve(this.config.outputCsDirectory, file.subdirectory, `${file.name}.cs`);
+    }
+
+    private getTypeMethod(file: FileBinding) {
+        const result = new Array<string>();
+        result.push(`\tpublic static string GetTypeID()`);
+        result.push(`\t{`);
+        result.push(`\t\treturn "${file.name}";`);
+        result.push(`\t}`);
+        return result.join('\n');
     }
 
     private property(prop: PropertyBinding): string {
