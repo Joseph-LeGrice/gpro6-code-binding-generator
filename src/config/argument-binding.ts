@@ -63,57 +63,27 @@ export const ValidArguments: { [key: string]: ArgumentInfo } = {
         }
     },
     'vector4': {
-        cpp: 'MonoObject*',
-        cs: 'Vector4',
-        marshall: {
-            toType: 'Vector4',
-            toNativeMethod: 'MonoMarshall::GetVector4',
-            toManagedMethod: 'MonoMarshall::GetManagedVector4'
-        }
+        cpp: 'Vector4',
+        cs: 'Vector4'
     },
     'vector3': {
-        cpp: 'MonoObject*',
-        cs: 'Vector3',
-        marshall: {
-            toType: 'Vector3',
-            toNativeMethod: 'MonoMarshall::GetVector3',
-            toManagedMethod: 'MonoMarshall::GetManagedVector3'
-        }
+        cpp: 'Vector3',
+        cs: 'Vector3'
     },
     'vector2': {
-        cpp: 'MonoObject*',
-        cs: 'Vector2',
-        marshall: {
-            toType: 'Vector2',
-            toNativeMethod: 'MonoMarshall::GetVector2',
-            toManagedMethod: 'MonoMarshall::GetManagedVector2'
-        }
+        cpp: 'Vector2',
+        cs: 'Vector2'
     },
     'matrix4x4': {
-        cpp: 'MonoObject*',
-        cs: 'Matrix4x4',
-        marshall: {
-            toType: 'Matrix4x4',
-            toNativeMethod: 'MonoMarshall::GetMatrix4x4',
-            toManagedMethod: 'MonoMarshall::GetManagedMatrix4x4'
-        }
+        cpp: 'Matrix4x4',
+        cs: 'Matrix4x4'
     },
     'matrix3x3': {
-        cpp: 'MonoObject*',
-        cs: 'Matrix3x3',
-        marshall: {
-            toType: 'Matrix3x3',
-            toNativeMethod: 'MonoMarshall::GetMatrix3x3',
-            toManagedMethod: 'MonoMarshall::GetManagedMatrix3x3'
-        }
+        cpp: 'Matrix3x3',
+        cs: 'Matrix3x3'
     },
     'quaternion': {
-        cpp: 'MonoObject*',
-        cs: 'Quaternion',
-        marshall: {
-            toType: 'Quaternion',
-            toNativeMethod: 'MonoMarshall::GetQuaternion',
-            toManagedMethod: 'MonoMarshall::GetManagedQuaternion'
-        }
+        cpp: 'Quaternion',
+        cs: 'Quaternion'
     }
 }
