@@ -41,7 +41,7 @@ export class CppSourceGenerator extends BatchFileGenerator
     
     private registerCalls(file: FileBinding): string {        
         const result: Array<string> = new Array<string>();
-        result.push(`void ${this.config.namespace}::${file.name}API::RegisterCalls()`);
+        result.push(`extern void ${this.config.namespace}::${file.name}API::RegisterCalls()`);
         result.push(`{`);
         for (const m of file.methods) {
             if (m.methodType === 'instance') {
@@ -119,9 +119,9 @@ export class CppSourceGenerator extends BatchFileGenerator
     private methodSignature(file: FileBinding, methodConfig: MethodBinding) {
         let args = MethodBindingHelpers.getArgDefinitions(methodConfig, GeneratedType.cpp);
         if (args.length > 0) {
-            return `${MethodBindingHelpers.returnType(methodConfig, GeneratedType.cpp)} ${this.config.namespace}::${file.name}API::${methodConfig.name}(int managedInstanceId, ${MethodBindingHelpers.getArgDefinitions(methodConfig, GeneratedType.cpp)})`;
+            return `extern ${MethodBindingHelpers.returnType(methodConfig, GeneratedType.cpp)} ${this.config.namespace}::${file.name}API::${methodConfig.name}(int managedInstanceId, ${MethodBindingHelpers.getArgDefinitions(methodConfig, GeneratedType.cpp)})`;
         } else {
-            return `${MethodBindingHelpers.returnType(methodConfig, GeneratedType.cpp)} ${this.config.namespace}::${file.name}API::${methodConfig.name}(int managedInstanceId)`;
+            return `extern ${MethodBindingHelpers.returnType(methodConfig, GeneratedType.cpp)} ${this.config.namespace}::${file.name}API::${methodConfig.name}(int managedInstanceId)`;
         }
     }
 
@@ -183,7 +183,7 @@ export class CppSourceGenerator extends BatchFileGenerator
 
     private propertyGetterImpl(file: FileBinding, prop: PropertyBinding): string {
         const result = new Array<string>();
-        result.push(`${MethodBindingHelpers.returnType(prop, GeneratedType.cpp)} GPro::${file.name}API::${this.propertyGetterMethodName(prop)}(int managedInstanceId)`);
+        result.push(`extern ${MethodBindingHelpers.returnType(prop, GeneratedType.cpp)} GPro::${file.name}API::${this.propertyGetterMethodName(prop)}(int managedInstanceId)`);
         result.push('{');
         result.push(this.getNativeInstance(file));
         const marshallInfo = MethodBindingHelpers.getMarshall(prop.returnType);
@@ -198,7 +198,7 @@ export class CppSourceGenerator extends BatchFileGenerator
 
     private propertySetterImpl(file: FileBinding, prop: PropertyBinding): string {
         const result = new Array<string>();
-        result.push(`void GPro::${file.name}API::${this.propertySetterMethodName(prop)}(int managedInstanceId, ${MethodBindingHelpers.returnType(prop, GeneratedType.cpp)} value)`);
+        result.push(`extern void GPro::${file.name}API::${this.propertySetterMethodName(prop)}(int managedInstanceId, ${MethodBindingHelpers.returnType(prop, GeneratedType.cpp)} value)`);
         result.push('{');
         result.push(this.getNativeInstance(file));
         const marshallInfo = MethodBindingHelpers.getMarshall(prop.returnType);
