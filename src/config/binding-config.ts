@@ -43,6 +43,12 @@ export const MethodBindingHelpers = {
                 return argInfo.cpp;
             case GeneratedType.cs:
                 return argInfo.cs;
+            case GeneratedType.cs_method_descriptor:
+                if (argInfo.cs_method_descriptor) {
+                    return argInfo.cs_method_descriptor;
+                } else {
+                    return argInfo.cs;
+                }
         }
     },
 

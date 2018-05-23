@@ -58,13 +58,13 @@ export class CppSourceGenerator extends BatchFileGenerator
     }
 
     private addInstanceMonoCall(file: FileBinding, method: MethodBinding): string {
-        let args: string[] = [];
+        let cs_args: string[] = [];
         for (let i=0; i < method.args.length; i++) {
             const arg = method.args[i];
-            args.push(`${MethodBindingHelpers.getArgument(arg, GeneratedType.cs)}`);
+            cs_args.push(`${MethodBindingHelpers.getArgument(arg, GeneratedType.cs_method_descriptor)}`);
         }
-        if (args.length > 0) {
-            return `\tmono_add_internal_call("${file.name}::${method.name}(int,${args.join(',')})", ${this.config.namespace}::${file.name}API::${method.name});`
+        if (cs_args.length > 0) {
+            return `\tmono_add_internal_call("${file.name}::${method.name}(int,${cs_args.join(',')})", ${this.config.namespace}::${file.name}API::${method.name});`
         } else {
             return `\tmono_add_internal_call("${file.name}::${method.name}(int)", ${this.config.namespace}::${file.name}API::${method.name});`            
         }

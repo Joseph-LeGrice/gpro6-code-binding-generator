@@ -1,6 +1,7 @@
 export enum GeneratedType {
     cpp,
-    cs
+    cs,
+    cs_method_descriptor
 }
 
 export interface MarshallInfo {
@@ -12,6 +13,7 @@ export interface MarshallInfo {
 export interface ArgumentInfo {
     cpp: string;
     cs: string;
+    cs_method_descriptor?: string;
     marshall?: MarshallInfo;
 }
 
@@ -30,7 +32,8 @@ export const ValidArguments: { [key: string]: ArgumentInfo } = {
     },
     'float': {
         cpp: 'float',
-        cs: 'float'
+        cs: 'float',
+        cs_method_descriptor: 'single'
     },
     'double': {
         cpp: 'double',
