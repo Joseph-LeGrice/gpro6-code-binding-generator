@@ -53,12 +53,12 @@ export class CsBindingGenerator extends BatchFileGenerator
         
         if (prop.getter) {
             result.push(`\t[MethodImpl(MethodImplOptions.InternalCall)]`);
-            result.push(`\tprivate extern ${MethodBindingHelpers.returnType(prop, GeneratedType.cs)} ${this.propertyGetter(prop, "int instanceId")}\n`);
+            result.push(`\tprivate extern static ${MethodBindingHelpers.returnType(prop, GeneratedType.cs)} ${this.propertyGetter(prop, "int instanceId")}\n`);
         }
         
         if (prop.setter) {
             result.push(`\t[MethodImpl(MethodImplOptions.InternalCall)]`);
-            result.push(`\tprivate extern void ${this.propertySetter(prop, `int instanceId, ${MethodBindingHelpers.returnType(prop, GeneratedType.cs)} val`)}\n`);
+            result.push(`\tprivate extern static void ${this.propertySetter(prop, `int instanceId, ${MethodBindingHelpers.returnType(prop, GeneratedType.cs)} val`)}\n`);
         }
 
         result.push(`\tpublic ${MethodBindingHelpers.returnType(prop, GeneratedType.cs)} ${prop.name}`);
