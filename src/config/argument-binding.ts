@@ -25,7 +25,7 @@ export const ValidArguments: { [key: string]: ArgumentInfo } = {
     'object' : {
         cpp: 'MonoObject*',
         cs: 'ITypedObject',
-        cs_method_descriptor: 'object',
+        cs_method_descriptor: 'ITypedObject',
         marshall: {
             toType: 'ToPtr',
             toNativeMethod: 'MonoMarshall::GetNativePointer',
