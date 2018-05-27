@@ -151,7 +151,16 @@ export class CppSourceGenerator extends BatchFileGenerator
         if (methodConfig.returnType !== 'void') {
             result.push('return ');
         }
-        result.push(`nativeClassInstance->${methodConfig.name}(${MethodBindingHelpers.getArgUses(methodConfig, GeneratedType.cpp)});`);
+
+        const marshallInfo = MethodBindingHelpers.getMarshall(methodConfig.returnType);
+        if (marshallInfo) {
+            result.push(`${marshallInfo.toManagedMethod}(`);
+        }
+        result.push(`nativeClassInstance->${methodConfig.name}(${MethodBindingHelpers.getArgUses(methodConfig, GeneratedType.cpp)})`);
+        if (marshallInfo) {
+            result.push(')');
+        }
+        result.push(';');
         return result.join('');
     }
 
