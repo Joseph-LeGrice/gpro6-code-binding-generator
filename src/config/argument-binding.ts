@@ -24,7 +24,13 @@ export const ValidArguments: { [key: string]: ArgumentInfo } = {
     },
     'object' : {
         cpp: 'MonoObject*',
-        cs: 'System.Object'
+        cs: 'ITypedObject',
+        cs_method_descriptor: 'object',
+        marshall: {
+            toType: 'ToPtr',
+            toNativeMethod: 'MonoMarshall::GetNativePointer',
+            toManagedMethod: 'MonoMarshall::GetManagedObject'
+        }
     },
     'int' : {
         cpp: 'int',
