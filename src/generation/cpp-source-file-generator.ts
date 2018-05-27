@@ -142,12 +142,7 @@ export class CppSourceGenerator extends BatchFileGenerator
     }
 
     private getNativeInstance(file: FileBinding): string {
-        const result = new Array<string>();
-        result.push(`\tNativeToManagedInstanceMap* ntmip = GlobalStaticReferences::Instance()->GetNativeToManagedInstanceMap();`);
-        result.push(`\tInstanceID nativeInstanceId = ntmip->GetNativeInstanceID(${file.name}::GetTypeID(), managedInstanceId);`);
-        result.push(`\tTypedObjectManager* tom = GlobalStaticReferences::Instance()->GetTypedObjectManager();`);
-        result.push(`\t${file.name}* nativeClassInstance = tom->GetInstance<${file.name}>(nativeInstanceId);`);
-        return result.join('\n');
+        return `\t${file.name}* nativeClassInstance = MonoMarshall::GetNativeObject<${file.name}>(managedInstanceId);`
     }
     
     private getCall(methodConfig: MethodBinding): string {
