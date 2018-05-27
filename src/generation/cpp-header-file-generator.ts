@@ -9,6 +9,8 @@ export class CppHeaderGenerator extends BatchFileGenerator
         const result: Array<string> = new Array<string>();
         result.push(`#pragma once\n`);
         
+        result.push(`#include "Engine/Core/RTTI/RTTI.h"\n`);
+
         result.push(`#pragma warning(push)`);
         result.push(`#pragma warning(disable:4201)`);
         result.push(`#include <mono/metadata/object.h>`);
@@ -48,9 +50,9 @@ export class CppHeaderGenerator extends BatchFileGenerator
     private instanceMethodDefinition(method: MethodBinding): string {
         let args = MethodBindingHelpers.getArgDefinitions(method, GeneratedType.cpp);
         if (args.length > 0) {
-            return `\t\textern ${MethodBindingHelpers.returnType(method, GeneratedType.cpp)} ${method.name}(int managedInstanceId, ${args});`
+            return `\t\textern ${MethodBindingHelpers.returnType(method, GeneratedType.cpp)} ${method.name}(InstanceID managedInstanceId, ${args});`
         } else {
-            return `\t\textern ${MethodBindingHelpers.returnType(method, GeneratedType.cpp)} ${method.name}(int managedInstanceId);`            
+            return `\t\textern ${MethodBindingHelpers.returnType(method, GeneratedType.cpp)} ${method.name}(InstanceID managedInstanceId);`            
         }
     }
 
@@ -61,10 +63,10 @@ export class CppHeaderGenerator extends BatchFileGenerator
     private property(prop: PropertyBinding): string {
         const result = new Array<string>();
         if (prop.getter) {
-            result.push(`\t\t${MethodBindingHelpers.returnType(prop, GeneratedType.cpp)} ${this.propertyGetterMethodName(prop)}(int managedInstanceId);`);
+            result.push(`\t\t${MethodBindingHelpers.returnType(prop, GeneratedType.cpp)} ${this.propertyGetterMethodName(prop)}(InstanceID managedInstanceId);`);
         }
         if (prop.setter) {
-            result.push(`\t\tvoid ${this.propertySetterMethodName(prop)}(int managedInstanceId, ${MethodBindingHelpers.returnType(prop, GeneratedType.cpp)} val);`);
+            result.push(`\t\tvoid ${this.propertySetterMethodName(prop)}(InstanceID managedInstanceId, ${MethodBindingHelpers.returnType(prop, GeneratedType.cpp)} val);`);
         }
         return result.join('\n');
     }
