@@ -75,9 +75,9 @@ export const ValidArguments: { [key: string]: ArgumentInfo } = {
         cpp: 'MonoArray*',
         cs: 'PropertyInitializer[]',
         marshall: {
-            toType: 'std::vector<MaterialPropertyList::PropertyInitializer>',
-            toNativeMethod: 'MonoMarshall::GetValueVector<MaterialPropertyList::PropertyInitializer>',
-            toManagedMethod: 'MonoMarshall::GetManagedValueVector<MaterialPropertyList::PropertyInitializer>'
+            toType: 'std::vector<MaterialProperty::Initializer>',
+            toNativeMethod: 'MonoMarshall::GetPropertyInitializerVector',
+            toManagedMethod: 'MonoMarshall::GetManagedPropertyInitializerVector'
         }
     },
     'vector4': {
