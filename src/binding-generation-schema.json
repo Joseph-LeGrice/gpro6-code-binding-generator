@@ -24,9 +24,9 @@
                 "title": "File Configuration",
                 "type": "object",
                 "required": [
-                    "nativeIncludePath",
-                    "nativeClassName",
-                    "managedClassName",
+                    "name",
+                    "includePaths",
+                    "subdirectory",
                     "methods",
                     "properties"
                 ],
@@ -74,6 +74,7 @@
                                         "bool",
                                         "string",
                                         "array-string",
+                                        "array-PropertyInitializer",
                                         "vector4",
                                         "vector3",
                                         "vector2",
@@ -85,7 +86,7 @@
                                 "args": {
                                     "type": "array",
                                     "items": {
-                                        "type": "string",
+                                        "type": ["string", "object"],
                                         "enum": [
                                             "void",
                                             "object",
@@ -96,6 +97,7 @@
                                             "bool",
                                             "string",
                                             "array-string",
+                                            "array-PropertyInitializer",
                                             "vector4",
                                             "vector3",
                                             "vector2",
@@ -143,6 +145,7 @@
                                         "bool",
                                         "string",
                                         "array-string",
+                                        "array-PropertyInitializer",
                                         "vector4",
                                         "vector3",
                                         "vector2",
