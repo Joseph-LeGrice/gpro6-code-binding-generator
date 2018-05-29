@@ -9,7 +9,7 @@ export interface BindingConfiguration {
 
 export interface FileBinding {
     name: string;
-    includePath: string;
+    includePaths: string[];
     subdirectory: string;
     methods: Array<MethodBinding>;
     properties: Array<PropertyBinding>;    

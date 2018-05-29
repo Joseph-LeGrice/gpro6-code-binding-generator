@@ -10,8 +10,10 @@ export class CppSourceGenerator extends BatchFileGenerator
         result.push(`#include "stdafx.h"`);
         result.push(`#include "${file.name}API.h"`);
         result.push(`#include "Engine/Core/GlobalStaticReferences.h"`);
-        if (file.includePath) {
-            result.push(`#include "${file.includePath}"\n`);
+        if (file.includePaths) {
+            for (const path of file.includePaths) {
+                result.push(`#include "${path}"\n`);
+            }
         }
         result.push(`#include "Engine/Core/Scripting/NativeToManagedInstanceMap.h"`);
         result.push(`#include "Engine/Core/Scripting/MonoMarshallHelpers.h"`);
