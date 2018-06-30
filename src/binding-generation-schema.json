@@ -31,13 +31,16 @@
                     "properties"
                 ],
                 "properties": {
-                    "nativeIncludePath": {
+                    "includePaths": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "name": {
                         "type": "string"
                     },
-                    "nativeClassName": {
-                        "type": "string"
-                    },
-                    "managedClassName": {
+                    "subdirectory": {
                         "type": "string"
                     },
                     "methods": {
