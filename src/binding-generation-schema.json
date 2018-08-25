@@ -1,167 +1,241 @@
 {
-    "$schema": "http://json-schema.org/draft-06/schema#",
-    "title": "Binding Generation Configuration",
-    "type": "object",
-    "required": [
-        "namespace",
-        "outputCppDirectory",
-        "outputCsDirectory",
-        "fileBindings"
-    ],
-    "properties": {
-        "namespace": {
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "title": "Binding Generation Configuration",
+  "type": "object",
+  "required": [
+    "namespace",
+    "outputCppDirectory",
+    "outputCsDirectory",
+    "fileBindings"
+  ],
+  "properties": {
+    "namespace": {
+      "type": "string"
+    },
+    "outputCppDirectory": {
+      "type": "string"
+    },
+    "outputCsDirectory": {
+      "type": "string"
+    },
+    "fileBindings": {
+      "type": "array",
+      "items": {
+        "title": "File Configuration",
+        "type": "object",
+        "required": [
+          "name",
+          "includePaths",
+          "subdirectory",
+          "methods",
+          "properties"
+        ],
+        "properties": {
+          "nativeIncludePath": {
             "type": "string"
-        },
-        "outputCppDirectory": {
+          },
+          "nativeClassName": {
             "type": "string"
-        },
-        "outputCsDirectory": {
+          },
+          "managedClassName": {
             "type": "string"
-        },
-        "fileBindings": {
+          },
+          "methods": {
             "type": "array",
             "items": {
-                "title": "File Configuration",
-                "type": "object",
-                "required": [
-                    "name",
-                    "includePaths",
-                    "subdirectory",
-                    "methods",
-                    "properties"
-                ],
-                "properties": {
-                    "includePaths": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
+              "title": "Method Info",
+              "type": "object",
+              "required": [
+                "methodType",
+                "name",
+                "returnType",
+                "args"
+              ],
+              "properties": {
+                "includePaths": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "name": {
+                  "type": "string"
+                },
+                "subdirectory": {
+                  "type": "string"
+                },
+                "methods": {
+                    "type": "array",
+                    "items": {
+                      "title": "Method Info",
+                      "type": "object",
+                      "required": [
+                        "methodType",
+                        "name",
+                        "returnType",
+                        "args"
+                      ],
+                      "properties": {
+                        "methodType": {
+                          "type": "string",
+                          "enum": [
+                            "instance",
+                            "static",
+                            "ivar"
+                          ]
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "returnType": {
+                          "type": "string",
+                          "enum": [
+                            "void",
+                            "object",                                        
+                            "int",
+                            "float",
+                            "double",
+                            "char",
+                            "bool",
+                            "string",
+                            "array-string",
+                            "array-PropertyInitializer",
+                            "vector4",
+                            "vector3",
+                            "vector2",
+                            "matrix4x4",
+                            "matrix3x3",
+                            "quaternion"
+                          ]
+                        },
+                        "args": {
+                          "type": "array",
+                          "items": {
+                            "type": ["string", "object"],
+                            "enum": [
+                              "void",
+                              "object",
+                              "int",
+                              "float",
+                              "double",
+                              "char",
+                              "bool",
+                              "string",
+                              "array-string",
+                              "array-PropertyInitializer",
+                              "vector4",
+                              "vector3",
+                              "vector2",
+                              "matrix4x4",
+                              "matrix3x3",
+                              "quaternion"
+                            ]
+                          }
                         }
-                    },
-                    "name": {
-                        "type": "string"
-                    },
-                    "subdirectory": {
-                        "type": "string"
-                    },
-                    "methods": {
-                        "type": "array",
-                        "items": {
-                            "title": "Method Info",
-                            "type": "object",
-                            "required": [
-                                "methodType",
-                                "name",
-                                "returnType",
-                                "args"
-                            ],"properties": {
-                                "methodType": {
-                                    "type": "string",
-                                    "enum": [
-                                        "instance",
-                                        "static",
-                                        "ivar"
-                                    ]
-                                },
-                                "name": {
-                                    "type": "string"
-                                },
-                                "returnType": {
-                                    "type": "string",
-                                    "enum": [
-                                        "void",
-                                        "object",                                        
-                                        "int",
-                                        "float",
-                                        "double",
-                                        "char",
-                                        "bool",
-                                        "string",
-                                        "array-string",
-                                        "array-PropertyInitializer",
-                                        "vector4",
-                                        "vector3",
-                                        "vector2",
-                                        "matrix4x4",
-                                        "matrix3x3",
-                                        "quaternion"
-                                    ]
-                                },
-                                "args": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": ["string", "object"],
-                                        "enum": [
-                                            "void",
-                                            "object",
-                                            "int",
-                                            "float",
-                                            "double",
-                                            "char",
-                                            "bool",
-                                            "string",
-                                            "array-string",
-                                            "array-PropertyInitializer",
-                                            "vector4",
-                                            "vector3",
-                                            "vector2",
-                                            "matrix4x4",
-                                            "matrix3x3",
-                                            "quaternion"
-                                        ]
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "properties": {
-                        "type": "array",
-                        "items": {
-                            "title": "Property Binding Info",
-                            "type": "object",
-                            "required": [
-                                "getter",
-                                "setter",
-                                "name",
-                                "nativeName",
-                                "returnType"
-                            ],"properties": {
-                                "getter": {
-                                    "type": "boolean"
-                                },
-                                "setter": {
-                                    "type": "boolean"
-                                },
-                                "name": {
-                                    "type": "string"
-                                },
-                                "nativeName": {
-                                    "type": "string"
-                                },
-                                "returnType": {
-                                    "type": "string",
-                                    "enum": [
-                                        "object",
-                                        "int",
-                                        "float",
-                                        "double",
-                                        "char",
-                                        "bool",
-                                        "string",
-                                        "array-string",
-                                        "array-PropertyInitializer",
-                                        "vector4",
-                                        "vector3",
-                                        "vector2",
-                                        "matrix4x4",
-                                        "matrix3x3",
-                                        "quaternion"
-                                    ]
-                                }
-                            }
-                        }
+                      }
                     }
+                },
+                "properties": {
+                  "type": "array",
+                  "items": {
+                    "title": "Property Binding Info",
+                    "type": "object",
+                    "required": [
+                      "getter",
+                      "setter",
+                      "name",
+                      "nativeName",
+                      "returnType"
+                    ],
+                    "properties": {
+                      "getter": {
+                        "type": "boolean"
+                      },
+                      "setter": {
+                        "type": "boolean"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "nativeName": {
+                        "type": "string"
+                      },
+                      "returnType": {
+                        "type": "string",
+                        "enum": [
+                          "object",
+                          "int",
+                          "float",
+                          "double",
+                          "char",
+                          "bool",
+                          "string",
+                          "array-string",
+                          "array-PropertyInitializer",
+                          "vector4",
+                          "vector3",
+                          "vector2",
+                          "matrix4x4",
+                          "matrix3x3",
+                          "quaternion"
+                        ]
+                      }
+                    }
+                  }
                 }
+              }
             }
+          },
+          "properties": {
+            "type": "array",
+            "items": {
+              "title": "Property Binding Info",
+              "type": "object",
+              "required": [
+                "getter",
+                "setter",
+                "name",
+                "nativeName",
+                "returnType"
+              ],
+              "properties": {
+                "getter": {
+                  "type": "boolean"
+                },
+                "setter": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "nativeName": {
+                  "type": "string"
+                },
+                "returnType": {
+                  "type": "string",
+                    "enum": [
+                      "object",
+                      "int",
+                      "float",
+                      "double",
+                      "char",
+                      "bool",
+                      "string",
+                      "array-string",
+                      "array-PropertyInitializer",
+                      "vector4",
+                      "vector3",
+                      "vector2",
+                      "matrix4x4",
+                      "matrix3x3",
+                      "quaternion"
+                  ]
+                }
+              }
+            }
+          }
         }
+      }
     }
+  }
 }
