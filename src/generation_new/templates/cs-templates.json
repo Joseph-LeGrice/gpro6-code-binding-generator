@@ -1,0 +1,101 @@
+[
+  {
+    "id": "cs-source-file",
+    "name": "C# File",
+    "body": [
+      "$cs-using",
+      "",
+      "$cs-class"
+    ]
+  },
+  {
+    "id": "cs-using",
+    "name": "C# Using Declaration",
+    "body": [
+      "using $0;"
+    ]
+  },
+  {
+    "id": "cs-class",
+    "name": "C# Class",
+    "repeatable": true,
+    "body": [
+      "$0 $1$cs-parent-class",
+      "{",
+      "\t$cs-class",
+      "\t$cs-property",
+      "\t$cs-method-extern",
+      "\t$cs-method",
+      "}",
+      ""
+    ]
+  },
+  {
+    "id": "cs-parent-class",
+    "name": "C# Parent Class",
+    "body": [ " : $0" ]
+  },
+  {
+    "id": "cs-property",
+    "name": "C# Property",
+    "repeatable": true,
+    "body": [
+      "$0 $1 $2",
+      "{",
+      "\t$cs-property-get",
+      "\t$cs-property-set",
+      "}",
+      ""
+    ]
+  },
+  {
+    "id": "cs-property-get",
+    "name": "C# Property Getter",
+    "body": [
+      "get",
+      "{",
+      "\t$0",
+      "}"
+    ]
+  },
+  {
+    "id": "cs-property-set",
+    "name": "C# Property Setter",
+    "body": [
+      "get",
+      "{",
+      "\t$0",
+      "}"
+    ]
+  },
+  {
+    "id": "cs-method-extern",
+    "name": "C# Extern Method",
+    "repeatable": true,
+    "body": [
+      "[MethodImpl(MethodImplOptions.InternalCall)]",
+      "$0 extern static $1 $2($cs-method-arg);",
+      ""
+    ]
+  },
+  {
+    "id": "cs-method",
+    "name": "C# Method",
+    "repeatable": true,
+    "body": [
+      "$0 $1 $2($cs-method-arg)",
+      "{",
+      "\t$3",
+      "}",
+      ""
+    ]
+  },
+  {
+    "id": "cs-method-arg",
+    "name": "C# Method Argument",
+    "joiner": ", ",
+    "body": [
+      "$0 $1"
+    ]
+  }
+]

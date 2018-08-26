@@ -7,13 +7,15 @@ import { CppHeaderGenerator } from './generation/cpp-header-file-generator';
 import { CppSourceGenerator } from './generation/cpp-source-file-generator';
 import { CppBindingHeaderGenerator, CppBindingSourceGenerator } from './generation/cpp-binding-registration-generator';
 import { CsBindingGenerator } from './generation/cs-binding-generator';
+import { Generate } from './generation_new/generator';
 
 var parser = new ArgumentParser({ addHelp: true });
 parser.addArgument(['CONFIG_FILE'], { help: "Configuration File for Binding Generation" });
 
 var args = parser.parseArgs();
 
-main();
+// main();
+Generate();
 
 async function main() : Promise<void> {
   var config: BindingConfiguration = fs.readJsonSync(args.CONFIG_FILE);

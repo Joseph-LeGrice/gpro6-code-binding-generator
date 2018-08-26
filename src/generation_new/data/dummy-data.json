@@ -1,0 +1,60 @@
+{
+  "name": "TestClass",
+  "language": "C#",
+  "contents": {
+    "cs-source-file":
+    [
+      {
+        "data": [],
+        "children":
+        {
+          "cs-using":
+          [
+            {
+              "data": [ "System" ],
+              "children": {}
+            },
+            {
+              "data": [ "System.Collections.Generic" ],
+              "children": {}
+            }
+          ],
+          "cs-class":
+          [
+            {
+              "data": [ "public", "TestClass", "Object" ],
+              "children":
+              {
+                "cs-class": [],
+                "cs-property": [],
+                "cs-method-extern": [],
+                "cs-method": [
+                  {
+                    "data": [ "private", "void", "MethodA" ],
+                    "children": {}
+                  },
+                  {
+                    "data": [ "public", "string", "MethodB" ],
+                    "children":
+                    {
+                      "cs-method-arg": [
+                        {
+                          "data": [ "string", "arg_0" ],
+                          "children": {}
+                        },
+                        {
+                          "data": [ "float", "arg_1" ],
+                          "children": {}
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
