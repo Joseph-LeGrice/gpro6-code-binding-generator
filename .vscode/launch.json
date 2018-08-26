@@ -1,23 +1,22 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Launch Program",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}\\dist\\main.js",
-            "args": [
-                "--input-directory", "${workspaceFolder}\\data\\json-config",
-                "--output-cpp-directory", "${workspaceFolder}\\data\\cpp",
-                "--output-cs-directory", "${workspaceFolder}\\data\\cs"
-            ],
-            "outFiles": [
-                "${workspaceFolder}/**/*.js"
-            ]
-        }
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Program",
+      "preLaunchTask": "compile",
+      "program": "${workspaceFolder}\\dist\\main.js",
+      "sourceMaps": true,
+      "args": [
+        "${workspaceFolder}\\data\\json-config\\test-binding.json",
+      ],
+      "outFiles": [
+        "${workspaceFolder}/**/*.js"
+      ]
+    }
+  ]
 }
