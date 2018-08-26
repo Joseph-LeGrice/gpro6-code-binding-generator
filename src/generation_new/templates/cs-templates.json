@@ -22,12 +22,20 @@
     "body": [
       "$0 $1$cs-parent-class",
       "{",
-      "\t$cs-class",
-      "\t$cs-property",
-      "\t$cs-method-extern",
-      "\t$cs-method",
+      "\t$cs-class-body",
       "}",
       ""
+    ]
+  },
+  {
+    "id": "cs-class-body",
+    "name": "C# Class Body",
+    "repeatable": true,
+    "body":[
+      "$cs-class",
+      "$cs-property",
+      "$cs-method-extern",
+      "$cs-method"
     ]
   },
   {
@@ -71,6 +79,7 @@
   {
     "id": "cs-method-extern",
     "name": "C# Extern Method",
+    "joiner": "\n",
     "repeatable": true,
     "body": [
       "[MethodImpl(MethodImplOptions.InternalCall)]",
@@ -81,13 +90,13 @@
   {
     "id": "cs-method",
     "name": "C# Method",
+    "joiner": "\n",
     "repeatable": true,
     "body": [
       "$0 $1 $2($cs-method-arg)",
       "{",
-      "\t$3",
-      "}",
-      ""
+      "\t$cs-method-body",
+      "}"
     ]
   },
   {
@@ -97,5 +106,11 @@
     "body": [
       "$0 $1"
     ]
+  },
+  {
+    "id": "cs-method-body",
+    "name": "C# Method Body",
+    "repeatable": true,
+    "body": [ "$0" ]
   }
 ]

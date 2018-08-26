@@ -29,13 +29,13 @@ function ProcessItem(item: ConfigurationItem, template: Template): string[] {
     const regex = /(?<=\$)([a-z0-9\-]+)/g;
     const symbolResults = templateLine.match(regex);
     if (symbolResults) {
-      let shouldAdd = false;
+      let isSingleLine = false;
       let line = templateLine;
       for (const symbol of symbolResults) {
         const i = parseInt(symbol);
         if (!isNaN(i)) {
           if (i < item.data.length) {
-            shouldAdd = true;
+            isSingleLine = true;
             line = line.replace(`$${symbol}`, item.data[i]);
           } else {
             line = line.replace(`$${symbol}`, "");
@@ -51,17 +51,24 @@ function ProcessItem(item: ConfigurationItem, template: Template): string[] {
             }
             
             if (ccResults.length > 0) {
-              shouldAdd = true;
-
-              let seperator = childTemplate.joiner ? childTemplate.joiner : "\n";
               if (childTemplate.repeatable) {
-                seperator = seperator + templateLine.replace(`$${symbol}`, "");
+                isSingleLine = false;
+                const prefix = templateLine.replace(`$${symbol}`, "");
+                result.push(
+                  ...ccResults.map(ccr => `${prefix}${ccr}`)
+                );
+                
+                if (childTemplate.joiner) {
+                  result.push(childTemplate.joiner)
+                }
+              } else {
+                let seperator = childTemplate.joiner ? childTemplate.joiner : "";
+                isSingleLine = true;
+                line = line.replace(
+                  `$${symbol}`,
+                  ccResults.join(seperator)
+                );
               }
-
-              line = line.replace(
-                `$${symbol}`,
-                ccResults.join(seperator)
-              );
             }
           } else {
             line = line.replace(`$${symbol}`, "");
@@ -69,7 +76,7 @@ function ProcessItem(item: ConfigurationItem, template: Template): string[] {
         }
       }
 
-      if (shouldAdd) {
+      if (isSingleLine) {
         result.push(line);
       }
     } else {

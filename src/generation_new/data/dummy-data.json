@@ -25,26 +25,33 @@
               "data": [ "public", "TestClass", "Object" ],
               "children":
               {
-                "cs-class": [],
-                "cs-property": [],
-                "cs-method-extern": [],
-                "cs-method": [
+                "cs-class-body":
+                [
                   {
-                    "data": [ "private", "void", "MethodA" ],
-                    "children": {}
-                  },
-                  {
-                    "data": [ "public", "string", "MethodB" ],
+                    "data": [],
                     "children":
                     {
-                      "cs-method-arg": [
+                      "cs-class": [],
+                      "cs-property": [],
+                      "cs-method-extern": [],
+                      "cs-method": [
                         {
-                          "data": [ "string", "arg_0" ],
+                          "data": [ "private", "void", "MethodA" ],
                           "children": {}
                         },
                         {
-                          "data": [ "float", "arg_1" ],
-                          "children": {}
+                          "data": [ "public", "string", "MethodB" ],
+                          "children":
+                          {
+                            "cs-method-arg": [
+                              [ "string", "arg_0" ],
+                              [ "float", "arg_1" ]
+                            ],
+                            "cs-method-body": [
+                              "float a = 0.5f;",
+                              "Console.Log(a * 2);"
+                            ]
+                          }
                         }
                       ]
                     }
