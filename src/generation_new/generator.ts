@@ -1,16 +1,15 @@
-import { TemplateLookup, loadTemplate, Template } from "./templates/template-loader"
-import { loadData, ConfigurationItem, ConfigurationLookup } from "./data/config-loader";
-
+import { ITemplateLookup, loadTemplate, ITemplate } from "./templates/template-loader";
+import { loadData, IConfigurationItem, IConfigurationLookup } from "./data/config-loader";
 
 const lookup = loadTemplate("cs");
 
 export function Generate() {
   const data = loadData("cs");
   const result = Process(data.contents);
-  console.log(result)
+  console.log(result);
 }
 
-function Process(configMap: ConfigurationLookup) {
+function Process(configMap: IConfigurationLookup) {
   const result: string[] = [];
   const configIds = Object.keys(configMap);
   for (const id of configIds) {
@@ -23,7 +22,7 @@ function Process(configMap: ConfigurationLookup) {
   return result.join("\n");
 }
 
-function processItem(item: ConfigurationItem, template: Template): string[] {
+function processItem(item: IConfigurationItem, template: ITemplate): string[] {
   const result: string[] = [];
   for (const templateLine of template.body) {
     const regex = /(?<=\$)([a-z0-9\-]+)/g;
@@ -47,14 +46,14 @@ function processItem(item: ConfigurationItem, template: Template): string[] {
 }
 
 function processMultiLine(
-  symbolResults: string[], item: ConfigurationItem, templateLine: string
+  symbolResults: string[], item: IConfigurationItem, templateLine: string
 ): string[] {
   const childConfigs = item.children[symbolResults[0]];
   const template = lookup[symbolResults[0]];
   if (childConfigs && childConfigs.length > 0) {
     const prefix = templateLine.replace(`$${symbolResults[0]}`, "");
-    let results: string[] = []
-    for(let i=0; i<childConfigs.length; i++) {
+    let results: string[] = [];
+    for (let i = 0; i < childConfigs.length; i++) {
       const config = childConfigs[i];
       results = results.concat(
         processItem(config, template).map((ccr) => `${prefix}${ccr}`)
@@ -70,7 +69,7 @@ function processMultiLine(
 }
 
 function processSingleLine(
-  symbolResults: string[], item: ConfigurationItem, templateLine: string
+  symbolResults: string[], item: IConfigurationItem, templateLine: string
 ): string {
   let line = templateLine;
   for (const symbol of symbolResults) {
@@ -85,12 +84,12 @@ function processSingleLine(
       const childConfigs = item.children[symbol];
       const childTemplate = lookup[symbol];
       if (childConfigs && childConfigs.length > 0) {
-        let ccResults: string[] = []
-        for(const config of childConfigs) {
+        let ccResults: string[] = [];
+        for (const config of childConfigs) {
           ccResults = ccResults.concat(processItem(config, childTemplate));
         }
-        
-        let seperator = childTemplate.joiner ? childTemplate.joiner : "";
+
+        const seperator = childTemplate.joiner ? childTemplate.joiner : "";
         line = line.replace(`$${symbol}`, ccResults.join(seperator));
       } else {
         line = line.replace(`$${symbol}`, "");

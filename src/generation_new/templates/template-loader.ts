@@ -1,6 +1,6 @@
-import CSharpTemplates from "./cs-templates.json"
+import CSharpTemplates from "./cs-templates.json";
 
-export interface Template {
+export interface ITemplate {
   id: string;
   name: string;
   joiner?: string;
@@ -8,12 +8,12 @@ export interface Template {
   body: string[];
 }
 
-export type TemplateLookup = { [id: string]: Template };
+export interface ITemplateLookup { [id: string]: ITemplate; }
 
 // TODO: Store all templates in mongodb database, do a find query here and put the results into a template lookup map
 
-export function loadTemplate(type: string): TemplateLookup {
-  let result: TemplateLookup = {};
+export function loadTemplate(type: string): ITemplateLookup {
+  const result: ITemplateLookup = {};
   for (const t of CSharpTemplates) {
     result[t.id] = t;
   }

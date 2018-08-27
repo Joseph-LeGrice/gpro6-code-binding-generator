@@ -1,20 +1,21 @@
-import TestData from "./dummy-data.json"
+import TestData from "./dummy-data.json";
 
-export type ConfigurationLookup = { [id: string]: ConfigurationItem[] };
+export interface IConfigurationLookup { [id: string]: IConfigurationItem[]; }
 
-export interface Configuration {
+export interface IConfiguration {
   name: string;
   language: string;
-  contents: ConfigurationLookup;
+  outputFile: string;
+  contents: IConfigurationLookup;
 }
 
-export interface ConfigurationItem {
+export interface IConfigurationItem {
   data: string[];
-  children: ConfigurationLookup
+  children: IConfigurationLookup;
 }
 
 // TODO: Data to be saved / loaded from a mongodb instance
 
-export function loadData(id: string): Configuration {
+export function loadData(id: string): IConfiguration {
   return TestData;
 }

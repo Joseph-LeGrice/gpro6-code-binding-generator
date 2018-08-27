@@ -1,6 +1,7 @@
 {
   "name": "TestClass",
   "language": "C#",
+  "outputFile": "TestClass.cs",
   "contents": {
     "cs-source-file":
     [
