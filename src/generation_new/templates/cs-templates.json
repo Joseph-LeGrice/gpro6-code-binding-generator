@@ -11,6 +11,7 @@
   {
     "id": "cs-using",
     "name": "C# Using Declaration",
+    "repeatable": true,
     "body": [
       "using $0;"
     ]

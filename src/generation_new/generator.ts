@@ -17,67 +17,27 @@ function Process(configMap: ConfigurationLookup) {
     const template = lookup[id];
     const configs = configMap[id];
     for (const c of configs) {
-      result.push(...ProcessItem(c, template));
+      result.push(...processItem(c, template));
     }
   }
   return result.join("\n");
 }
 
-function ProcessItem(item: ConfigurationItem, template: Template): string[] {
+function processItem(item: ConfigurationItem, template: Template): string[] {
   const result: string[] = [];
   for (const templateLine of template.body) {
     const regex = /(?<=\$)([a-z0-9\-]+)/g;
     const symbolResults = templateLine.match(regex);
     if (symbolResults) {
-      let isSingleLine = false;
-      let line = templateLine;
-      for (const symbol of symbolResults) {
-        const i = parseInt(symbol);
-        if (!isNaN(i)) {
-          if (i < item.data.length) {
-            isSingleLine = true;
-            line = line.replace(`$${symbol}`, item.data[i]);
-          } else {
-            line = line.replace(`$${symbol}`, "");
-          }
-        } else {
-          const childConfigs = item.children[symbol];
-          if (childConfigs) {
-            const childTemplate = lookup[symbol];
-            
-            let ccResults: string[] = []
-            for(const config of childConfigs) {
-              ccResults = ccResults.concat(ProcessItem(config, childTemplate));
-            }
-            
-            if (ccResults.length > 0) {
-              if (childTemplate.repeatable) {
-                isSingleLine = false;
-                const prefix = templateLine.replace(`$${symbol}`, "");
-                result.push(
-                  ...ccResults.map(ccr => `${prefix}${ccr}`)
-                );
-                
-                if (childTemplate.joiner) {
-                  result.push(childTemplate.joiner)
-                }
-              } else {
-                let seperator = childTemplate.joiner ? childTemplate.joiner : "";
-                isSingleLine = true;
-                line = line.replace(
-                  `$${symbol}`,
-                  ccResults.join(seperator)
-                );
-              }
-            }
-          } else {
-            line = line.replace(`$${symbol}`, "");
-          }
-        }
-      }
-
-      if (isSingleLine) {
-        result.push(line);
+      if (
+        symbolResults.length === 1 &&
+        lookup[symbolResults[0]] &&
+        lookup[symbolResults[0]].repeatable
+      ) {
+        const childLines = processMultiLine(symbolResults, item, templateLine);
+        result.push(...childLines);
+      } else {
+        result.push(processSingleLine(symbolResults, item, templateLine));
       }
     } else {
       result.push(templateLine);
@@ -86,13 +46,56 @@ function ProcessItem(item: ConfigurationItem, template: Template): string[] {
   return result;
 }
 
-// Process(c.children, lookup);
-
-function processSymbol(s: string, item: ConfigurationItem) {
-  const i = parseInt(s);
-  if (i) {
-    return item.data[i];
+function processMultiLine(
+  symbolResults: string[], item: ConfigurationItem, templateLine: string
+): string[] {
+  const childConfigs = item.children[symbolResults[0]];
+  const template = lookup[symbolResults[0]];
+  if (childConfigs && childConfigs.length > 0) {
+    const prefix = templateLine.replace(`$${symbolResults[0]}`, "");
+    let results: string[] = []
+    for(let i=0; i<childConfigs.length; i++) {
+      const config = childConfigs[i];
+      results = results.concat(
+        processItem(config, template).map((ccr) => `${prefix}${ccr}`)
+      );
+      if (template.joiner && i < childConfigs.length - 1) {
+        results.push(template.joiner);
+      }
+    }
+    return results;
   } else {
-    const matchingChild = item.children
+    return [];
   }
+}
+
+function processSingleLine(
+  symbolResults: string[], item: ConfigurationItem, templateLine: string
+): string {
+  let line = templateLine;
+  for (const symbol of symbolResults) {
+    const i = parseInt(symbol);
+    if (!isNaN(i)) {
+      if (i < item.data.length) {
+        line = line.replace(`$${symbol}`, item.data[i]);
+      } else {
+        line = line.replace(`$${symbol}`, "");
+      }
+    } else {
+      const childConfigs = item.children[symbol];
+      const childTemplate = lookup[symbol];
+      if (childConfigs && childConfigs.length > 0) {
+        let ccResults: string[] = []
+        for(const config of childConfigs) {
+          ccResults = ccResults.concat(processItem(config, childTemplate));
+        }
+        
+        let seperator = childTemplate.joiner ? childTemplate.joiner : "";
+        line = line.replace(`$${symbol}`, ccResults.join(seperator));
+      } else {
+        line = line.replace(`$${symbol}`, "");
+      }
+    }
+  }
+  return line;
 }

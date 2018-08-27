@@ -44,12 +44,12 @@
                           "children":
                           {
                             "cs-method-arg": [
-                              [ "string", "arg_0" ],
-                              [ "float", "arg_1" ]
+                              {"data": [ "string", "arg_0" ], "children":{}},
+                              {"data": [ "float", "arg_1" ], "children":{}}
                             ],
                             "cs-method-body": [
-                              "float a = 0.5f;",
-                              "Console.Log(a * 2);"
+                              {"data": ["float a = 0.5f;"], "children":{}},
+                              {"data": ["Console.Log(a * 2);"], "children":{}}
                             ]
                           }
                         }
