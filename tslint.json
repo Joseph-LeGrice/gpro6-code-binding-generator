@@ -10,5 +10,11 @@
       "ordered-imports": false,
       "no-console": false
     },
-    "rulesDirectory": []
-}
+    "rulesDirectory": [],
+    "linterOptions": {
+      "exclude": [
+        "src/config/*",
+        "src/generation/*"
+      ]
+    }
+  }
