@@ -19,37 +19,46 @@
               "children": {}
             }
           ],
-          "cs-class":
+          "cs-namespace":
           [
             {
-              "data": [ "public", "TestClass", "Object" ],
+              "data": ["TestNamespace"],
               "children":
               {
-                "cs-class-body":
+                "cs-class":
                 [
                   {
-                    "data": [],
+                    "data": [ "public", "TestClass", "Object" ],
                     "children":
                     {
-                      "cs-class": [],
-                      "cs-property": [],
-                      "cs-method-extern": [],
-                      "cs-method": [
+                      "cs-class-body":
+                      [
                         {
-                          "data": [ "private", "void", "MethodA" ],
-                          "children": {}
-                        },
-                        {
-                          "data": [ "public", "string", "MethodB" ],
+                          "data": [],
                           "children":
                           {
-                            "cs-method-arg": [
-                              {"data": [ "string", "arg_0" ], "children":{}},
-                              {"data": [ "float", "arg_1" ], "children":{}}
-                            ],
-                            "cs-method-body": [
-                              {"data": ["float a = 0.5f;"], "children":{}},
-                              {"data": ["Console.Log(a * 2);"], "children":{}}
+                            "cs-class": [],
+                            "cs-property": [],
+                            "cs-method-extern": [],
+                            "cs-method": [
+                              {
+                                "data": [ "private", "void", "MethodA" ],
+                                "children": {}
+                              },
+                              {
+                                "data": [ "public", "string", "MethodB" ],
+                                "children":
+                                {
+                                  "cs-method-arg": [
+                                    {"data": [ "string", "arg_0" ], "children":{}},
+                                    {"data": [ "float", "arg_1" ], "children":{}}
+                                  ],
+                                  "cs-method-body": [
+                                    {"data": ["float a = 0.5f;"], "children":{}},
+                                    {"data": ["Console.Log(a * 2);"], "children":{}}
+                                  ]
+                                }
+                              }
                             ]
                           }
                         }

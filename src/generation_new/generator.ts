@@ -59,7 +59,7 @@ function processMultiLine(
       results = results.concat(
         processItem(config, template).map((ccr) => `${prefix}${ccr}`)
       );
-      if (template.joiner && i < childConfigs.length - 1) {
+      if (template.joiner !== undefined && i < childConfigs.length - 1) {
         results.push(template.joiner);
       }
     }

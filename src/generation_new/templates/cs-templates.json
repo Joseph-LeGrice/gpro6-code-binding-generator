@@ -5,7 +5,7 @@
     "body": [
       "$cs-using",
       "",
-      "$cs-class"
+      "$cs-namespace"
     ]
   },
   {
@@ -17,15 +17,26 @@
     ]
   },
   {
-    "id": "cs-class",
-    "name": "C# Class",
+    "id": "cs-namespace",
+    "name": "C# Namespace",
     "repeatable": true,
     "body": [
-      "$0 $1$cs-parent-class",
+      "namespace $0",
       "{",
-      "\t$cs-class-body",
-      "}",
-      ""
+      "    $cs-class",
+      "}"
+    ]
+  },
+  {
+    "id": "cs-class",
+    "name": "C# Class",
+    "joiner": "",
+    "repeatable": true,
+    "body": [
+      "$0 class $1$cs-parent-class",
+      "{",
+      "    $cs-class-body",
+      "}"
     ]
   },
   {
@@ -51,10 +62,9 @@
     "body": [
       "$0 $1 $2",
       "{",
-      "\t$cs-property-get",
-      "\t$cs-property-set",
-      "}",
-      ""
+      "    $cs-property-get",
+      "    $cs-property-set",
+      "}"
     ]
   },
   {
@@ -63,7 +73,7 @@
     "body": [
       "get",
       "{",
-      "\t$0",
+      "    $0",
       "}"
     ]
   },
@@ -73,14 +83,14 @@
     "body": [
       "get",
       "{",
-      "\t$0",
+      "    $0",
       "}"
     ]
   },
   {
     "id": "cs-method-extern",
     "name": "C# Extern Method",
-    "joiner": "\n",
+    "joiner": "",
     "repeatable": true,
     "body": [
       "[MethodImpl(MethodImplOptions.InternalCall)]",
@@ -91,12 +101,12 @@
   {
     "id": "cs-method",
     "name": "C# Method",
-    "joiner": "\n",
+    "joiner": "",
     "repeatable": true,
     "body": [
       "$0 $1 $2($cs-method-arg)",
       "{",
-      "\t$cs-method-body",
+      "    $cs-method-body",
       "}"
     ]
   },
