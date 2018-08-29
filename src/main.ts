@@ -1,24 +1,31 @@
-import * as path from 'path'
-import * as fs from 'fs-extra'
-import { ArgumentParser } from 'argparse'
-import { BindingConfiguration, FileBinding } from './config/binding-config';
-import { GeneratedType } from './config/argument-binding';
-import { CppHeaderGenerator } from './generation/cpp-header-file-generator';
-import { CppSourceGenerator } from './generation/cpp-source-file-generator';
-import { CppBindingHeaderGenerator, CppBindingSourceGenerator } from './generation/cpp-binding-registration-generator';
-import { CsBindingGenerator } from './generation/cs-binding-generator';
-import { Generate } from './generation_new/generator';
+import * as path from "path";
+import * as fs from "fs-extra";
+import { ArgumentParser } from "argparse";
+import { BindingConfiguration, FileBinding } from "./config/binding-config";
+import { GeneratedType } from "./config/argument-binding";
+import { CppHeaderGenerator } from "./generation/cpp-header-file-generator";
+import { CppSourceGenerator } from "./generation/cpp-source-file-generator";
+import { CppBindingHeaderGenerator, CppBindingSourceGenerator } from "./generation/cpp-binding-registration-generator";
+import { CsBindingGenerator } from "./generation/cs-binding-generator";
+import { TemplateGenerator } from "./generation_new/generator";
+import { loadTemplate } from "./generation_new/templates/template-loader";
+import { loadData } from "./generation_new/data/config-loader";
 
-var parser = new ArgumentParser({ addHelp: true });
-parser.addArgument(['CONFIG_FILE'], { help: "Configuration File for Binding Generation" });
+const parser = new ArgumentParser({ addHelp: true });
+parser.addArgument(["CONFIG_FILE"], { help: "Configuration File for Binding Generation" });
 
-var args = parser.parseArgs();
+const args = parser.parseArgs();
 
 // main();
-Generate();
 
-async function main() : Promise<void> {
-  var config: BindingConfiguration = fs.readJsonSync(args.CONFIG_FILE);
+const lookup = loadTemplate("cs");
+const generator = new TemplateGenerator(lookup);
+
+const data = loadData("cs");
+generator.generate(data);
+
+async function main(): Promise<void> {
+  const config: BindingConfiguration = fs.readJsonSync(args.CONFIG_FILE);
   const configFileDir = path.dirname(args.CONFIG_FILE);
   config.outputCppDirectory = path.resolve(configFileDir, config.outputCppDirectory);
   config.outputCsDirectory = path.resolve(configFileDir, config.outputCsDirectory);
@@ -31,7 +38,7 @@ async function main() : Promise<void> {
   fs.ensureDirSync(config.outputCsDirectory);
 
   const allPromises = new Array<Promise<void>>();
-  
+
   const bindingHeaderGen = new CppBindingHeaderGenerator(config);
   allPromises.push(bindingHeaderGen.generate());
 
@@ -43,7 +50,7 @@ async function main() : Promise<void> {
 
   const headerGen = new CppHeaderGenerator(config);
   allPromises.push(headerGen.generate());
-  
+
   const csGen = new CsBindingGenerator(config);
   allPromises.push(csGen.generate());
 
